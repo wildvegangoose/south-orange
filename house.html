@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your House's Story · Maplewood Through Time</title>
+  <meta name="description" content="Enter a Maplewood, NJ address and get a story of that spot through 360 years of history.">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/house.css">
+  <link rel="stylesheet" href="css/archive.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23b8381e' d='M50 4l8 20 14-8-4 20 18-4-10 16 16 6-20 10 4 10-22-4-2 26h-4l-2-26-22 4 4-10-20-10 16-6-10-16 18 4-4-20 14 8z'/%3E%3C/svg%3E">
+</head>
+<body>
+<main>
+  <header class="page-hero house-hero" id="top">
+    <div class="wrap">
+      <div class="eyebrow">Your house's story</div>
+      <h1>Every address has a <em>past</em>.</h1>
+      <p class="lede">Type a Maplewood street address. We'll locate it, work out which colonial farm district and old road it sat near, and tell the story of that spot from Lenape trail to today. Add the year your house was built to get a story about that year.</p>
+      <form id="houseForm" class="house-form card raised">
+        <div class="field grow"><label for="q">Street address in Maplewood</label><input id="q" name="q" type="text" placeholder="e.g. 88 Tuscan Road" autocomplete="street-address" required></div>
+        <div class="field yr"><label for="built">Year built <span class="opt">(optional)</span></label><input id="built" name="built" type="number" min="1700" max="2026" placeholder="e.g. 1926"></div>
+        <button class="btn" type="submit">Tell its story <span aria-hidden="true">→</span></button>
+      </form>
+      <p class="small muted hint">Don't know the year? The Historic Preservation Commission notes that Essex County tax records give a construction date that is about 90% accurate for houses built after 1900. <a href="research.html#steps">More ways to find out →</a></p>
+      <div class="try small">Try: <button data-q="425 Ridgewood Road">425 Ridgewood Road</button><button data-q="88 Tuscan Road">88 Tuscan Road</button><button data-q="10 Durand Road">10 Durand Road</button><button data-q="1688 Springfield Avenue">1688 Springfield Avenue</button></div>
+    </div>
+  </header>
+
+  <section id="status" class="wrap status" aria-live="polite"></section>
+
+  <section id="story" class="story" hidden>
+    <div class="wrap">
+      <div class="story-head">
+        <div>
+          <div class="eyebrow" id="sectionName"></div>
+          <h2 id="storyTitle"></h2>
+          <div class="glance" id="glance"></div>
+        </div>
+        <div id="miniMap" class="mini-map" aria-label="Map of this location"></div>
+      </div>
+      <div id="landmarkBanner"></div>
+    </div>
+
+    <div class="wrap scrolly">
+      <div class="sticky-art"><div class="art-frame" id="art"></div><div class="art-cap" id="artCap"></div></div>
+      <div class="chapters" id="chapters"></div>
+    </div>
+
+    <section id="archive" class="archive" hidden></section>
+
+    <div class="wrap">
+      <h2 class="reveal" style="margin-top:4rem">Your historic neighbors</h2>
+      <p class="muted reveal">The closest places on our map, with walking distance from this spot.</p>
+      <div class="grid cols-3" id="neighbors"></div>
+
+      <div class="card research-box reveal" id="researchBox"></div>
+      <p class="small muted disclaimer">This story is put together automatically from neighborhood-level history. It is not a record of your specific house. Distances are approximate and the neighborhood is assigned from the nearest historic center. For documented history, use the sources listed above. Geocoding by <a href="https://nominatim.openstreetmap.org" target="_blank" rel="noopener">OpenStreetMap Nominatim</a>.</p>
+    </div>
+  </section>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="data/boundary.js"></script>
+<script src="js/data.js"></script>
+<script src="js/landmarks-data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/webstories.js"></script>
+<script src="js/archive.js"></script>
+<script src="js/house.js"></script>
+</body>
+</html>

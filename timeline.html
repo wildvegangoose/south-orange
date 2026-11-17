@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Timeline · Maplewood Through Time</title>
+  <meta name="description" content="Scroll through the history of Maplewood, New Jersey, from Lenape trails to today.">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/timeline.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23b8381e' d='M50 4l8 20 14-8-4 20 18-4-10 16 16 6-20 10 4 10-22-4-2 26h-4l-2-26-22 4 4-10-20-10 16-6-10-16 18 4-4-20 14 8z'/%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<main>
+  <header class="page-hero tl-hero">
+    <div class="wrap">
+      <div class="eyebrow">The timeline</div>
+      <h1>From the Upper Trail to the <em>rainbow crosswalk</em></h1>
+      <p class="lede">Every dated moment we could document, in order. As you scroll, the little town on the left keeps up with you.</p>
+      <div class="filters" id="filters"></div>
+    </div>
+  </header>
+
+  <div class="wrap tl-layout">
+    <aside class="tl-side">
+      <div class="tl-sticky">
+        <div class="tl-year" id="tlYear">1500</div>
+        <div class="tl-era" id="tlEra"></div>
+        <div id="tlScene" class="tl-scene"></div>
+        <div class="era-jump" id="eraJump"></div>
+      </div>
+    </aside>
+    <div class="tl" id="tl"></div>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/landmarks-data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/timeline.js"></script>
+</body>
+</html>

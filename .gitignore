@@ -1,0 +1,4 @@
+__pycache__/
+# working files of the archive pipeline
+/archive/_tmp/
+/archive/realestate/**/*.pdf

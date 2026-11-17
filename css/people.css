@@ -1,0 +1,16 @@
+.pp-controls { display: grid; gap: .8rem; margin-top: 1.6rem; max-width: 900px; }
+.pp-controls .chip.active { background: var(--ink); color: var(--paper); }
+.pp-group h2 { margin: 2.6rem 0 1rem; font-size: 1.6rem; border-bottom: 2px solid var(--line); padding-bottom: .4rem; }
+.pp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 1rem; }
+.pp-card { display: grid; grid-template-columns: 54px 1fr; gap: .9rem; background: #fffdf7; border: 1px solid var(--line); border-radius: 16px; padding: 1rem 1.1rem; transition: transform .25s, box-shadow .25s; }
+.pp-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.pp-av { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; font: 800 1.1rem var(--serif); color: #fff; background: var(--forest); }
+.pp-av.f-arts { background: #b8381e; } .pp-av.f-music { background: #4f3b4a; } .pp-av.f-lit { background: #8a5a1e; } .pp-av.f-sports { background: #2f4f5a; }
+.pp-av.f-science { background: #2d5240; } .pp-av.f-public { background: #3e4a44; } .pp-av.f-business { background: #a14a32; }
+.pp-body h3 { margin: 0 0 .2rem; font-size: 1.12rem; }
+.pp-body h3 a { color: inherit; text-decoration: none; } .pp-body h3 a:hover { color: var(--maple); text-decoration: underline; }
+.pp-meta { display: flex; gap: .5rem; align-items: center; font-size: .8rem; color: var(--ink-2); margin-bottom: .3rem; }
+.pp-body p { font-size: .92rem; margin: 0 0 .4rem; }
+.pp-home { display: block; font-size: .84rem; font-weight: 700; color: var(--maple); text-decoration: none; margin-top: .25rem; }
+.pp-home span { font-weight: 500; color: var(--ink-2); }
+.pp-home:hover { text-decoration: underline; }

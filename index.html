@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maplewood Through Time · A fan history of Maplewood, NJ</title>
+  <meta name="description" content="Slide through 360 years of Maplewood, New Jersey: Lenape trails, stone farmhouses, the railroad, the suburban boom and today.">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23b8381e' d='M50 4l8 20 14-8-4 20 18-4-10 16 16 6-20 10 4 10-22-4-2 26h-4l-2-26-22 4 4-10-20-10 16-6-10-16 18 4-4-20 14 8z'/%3E%3C/svg%3E">
+</head>
+<body>
+<main>
+  <header class="hero" id="hero">
+    <div class="wrap hero-text">
+      <div class="eyebrow">Maplewood, New Jersey · since before it had a name</div>
+      <h1>Step into <span class="hl">360 years</span> of Maplewood</h1>
+      <p class="lede">Drag the slider and watch the town rebuild itself. Stone farmhouses rise on Ridgewood Road, the steam train arrives, Tudors and foursquares fill the farm fields, and Memorial Park grows in. Click anything that glows to hear its story.</p>
+    </div>
+
+    <div class="scene-frame">
+      <div id="scene"></div>
+      <div class="scene-swipe" id="swipeHint">Swipe to explore →</div>
+      <div class="scene-tools"><button id="labelsBtn" aria-pressed="false">Show labels</button></div>
+    </div>
+
+    <div class="wrap">
+      <div class="card raised control" id="slider"></div>
+    </div>
+  </header>
+
+  <section class="section era-section">
+    <div class="wrap era-grid">
+      <article class="era-story" aria-live="polite">
+        <div class="eyebrow" id="eraRange">1904–1929</div>
+        <h2 id="eraName">The Great Suburban Boom</h2>
+        <p class="era-tag" id="eraTag"></p>
+        <div id="eraBody"></div>
+        <p class="sources" id="eraSources"></p>
+        <p class="small muted"><em>"What it was like" passages are our narrative synthesis of the sourced facts.</em></p>
+      </article>
+      <aside class="era-stats">
+        <div class="stat card">
+          <div class="stat-k">Population in <span id="statYear">1900</span></div>
+          <div class="stat-v" id="statPop">0</div>
+          <div class="stat-n small muted" id="statPopNote">U.S. Census, interpolated between counts</div>
+          <svg class="spark" id="spark" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true"></svg>
+        </div>
+        <div class="stat card">
+          <div class="stat-k">Landmarks standing</div>
+          <div class="stat-v" id="statStanding">0</div>
+          <div class="small muted">of the places on our map existed by this year</div>
+        </div>
+        <div class="stat card name-card">
+          <div class="stat-k">This place was called</div>
+          <div class="stat-v small-v" id="statName">Jefferson Village</div>
+        </div>
+      </aside>
+    </div>
+    <div class="wrap">
+      <h3 class="reveal" style="margin-top:3rem">Moments from this era <span class="muted small">(tap to jump)</span></h3>
+      <div class="moments" id="moments"></div>
+    </div>
+  </section>
+
+  <section class="section dark">
+    <div class="wrap">
+      <div class="eyebrow">Three ways in</div>
+      <h2 class="reveal">Explore the town that grew around a maple</h2>
+      <div class="grid cols-3 doors">
+        <a class="door reveal" href="explore.html">
+          <div class="door-art" data-art="map"></div>
+          <h3>Explore the Map</h3>
+          <p>A living map of more than 50 historic places. Turn back the clock and watch pins appear and vanish, from Lenape trails to the 2018 rainbow crosswalks.</p>
+          <span class="go">Open the map →</span>
+        </a>
+        <a class="door reveal d1" href="house.html">
+          <div class="door-art" data-art="house"></div>
+          <h3>Your House's Story</h3>
+          <p>Type any Maplewood address and get a story of that spot through time: which colonial farm district it sat in, the old road nearby, and what the town was like the year your house went up.</p>
+          <span class="go">Tell my house's story →</span>
+        </a>
+        <a class="door reveal d2" href="timeline.html">
+          <div class="door-art" data-art="time"></div>
+          <h3>The Timeline</h3>
+          <p>Scroll from 1666 to today, through the South Orange separation, the 1922 renaming, the Porgy and Bess revival and the birth of Ultimate Frisbee.</p>
+          <span class="go">Start scrolling →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="eyebrow">Did you know?</div>
+      <h2 class="reveal">Small town, outsized footnotes</h2>
+      <div class="facts" id="facts"></div>
+    </div>
+  </section>
+
+  <section class="section house-cta">
+    <div class="wrap cta-inner reveal">
+      <div>
+        <div class="eyebrow">Your address, through time</div>
+        <h2>What stood on your street in 1790?</h2>
+        <p class="lede">Enter a Maplewood address and we'll put together the story of that spot, from farm to suburb.</p>
+      </div>
+      <form class="cta-form" action="house.html" method="get">
+        <input type="text" name="q" placeholder="e.g. 523 Ridgewood Road" aria-label="Maplewood street address" required>
+        <button class="btn" type="submit">Tell its story</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/landmarks-data.js"></script>
+<script src="js/common.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/home.js"></script>
+</body>
+</html>

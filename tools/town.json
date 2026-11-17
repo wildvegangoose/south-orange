@@ -1,0 +1,278 @@
+{
+  "_comment": "Everything town-specific that the data tools need. Copy this file and edit it to build the same site for another town. See docs/PLAYBOOK.md.",
+  "name": "South Orange",
+  "state": "NJ",
+  "site_title": "South Orange Through Time",
+  "user_agent": "SouthOrangeThroughTime-fansite-research/0.1 (personal, non-commercial; polite crawl)",
+  "bbox": {
+    "west": -74.29,
+    "south": 40.733,
+    "east": -74.238,
+    "north": 40.77
+  },
+  "map_bbox": {
+    "west": -74.296,
+    "south": 40.728,
+    "east": -74.232,
+    "north": 40.775
+  },
+  "digifind": {
+    "_comment": "South Orange residents are in the Oranges city directories hosted on the MAPLEWOOD library's Digifind archive (town code SO). South Orange's own archive collections (if any) go here once known.",
+    "slug": "maplewood",
+    "city_directories_id": 1,
+    "realestate_id": null,
+    "realestate_street_id_range": [
+      0,
+      0
+    ],
+    "scrapbooks_id": null
+  },
+  "directories": {
+    "_comment": "Town codes used at the end of directory entries ('h 31 Park rd M'). The Oranges directories also cover South Orange (SO), Orange (O), East Orange (EO), West Orange (WO).",
+    "codes": {
+      "SO": "South Orange"
+    },
+    "years": [
+      1908,
+      1910,
+      1912,
+      1914,
+      1916,
+      1918,
+      1920,
+      1922,
+      1924,
+      1928,
+      1929,
+      1932,
+      1934,
+      1936,
+      1938,
+      1940,
+      1942,
+      1948,
+      1950
+    ],
+    "crop_years": [
+      1910,
+      1914,
+      1922,
+      1929,
+      1936,
+      1942,
+      1950
+    ],
+    "name_cutoff_year": 1950,
+    "not_surnames": [
+      "Orange",
+      "Oranges",
+      "Valley",
+      "Church",
+      "Ampere",
+      "Lincoln",
+      "Co",
+      "Newark",
+      "Irvington",
+      "Arlington",
+      "Main",
+      "Street",
+      "Avenue",
+      "Road",
+      "Place",
+      "Terrace",
+      "Directory",
+      "Mrs",
+      "Miss",
+      "Rev",
+      "Dr",
+      "South",
+      "Seton",
+      "Hall"
+    ]
+  },
+  "topo_layers": {
+    "_comment": "USGS historical topo GeoTIFFs (find them with the TNM API, see PLAYBOOK step 5). Each layer is a mosaic of quads cropped to their neatlines. res = metres per pixel. Check each file's ScienceBase 'End' date: a sheet titled 1955 can be a 1982 revision.",
+    "topo1888": {
+      "res": 4,
+      "quads": [
+        [
+          "NJ/NJ_Plainfield_255320_1888_62500_geo.tif",
+          -74.5,
+          40.5,
+          -74.25,
+          40.75
+        ],
+        [
+          "NJ/NJ_Morristown_255268_1888_62500_geo.tif",
+          -74.5,
+          40.75,
+          -74.25,
+          41.0
+        ]
+      ]
+    },
+    "topo1898": {
+      "res": 4,
+      "quads": [
+        [
+          "NY/NJ_Staten%20Island_255388_1898_62500_geo.tif",
+          -74.25,
+          40.5,
+          -74.0,
+          40.75
+        ],
+        [
+          "NJ/NJ_Plainfield_255322_1898_62500_geo.tif",
+          -74.5,
+          40.5,
+          -74.25,
+          40.75
+        ],
+        [
+          "NJ/NJ_Morristown_255270_1898_62500_geo.tif",
+          -74.5,
+          40.75,
+          -74.25,
+          41.0
+        ]
+      ]
+    },
+    "topo1906": {
+      "res": 4,
+      "quads": [
+        [
+          "NY/NJ_Staten%20Island_255392_1900_62500_geo.tif",
+          -74.25,
+          40.5,
+          -74.0,
+          40.75
+        ],
+        [
+          "NJ/NJ_Plainfield_255325_1905_62500_geo.tif",
+          -74.5,
+          40.5,
+          -74.25,
+          40.75
+        ],
+        [
+          "NJ/NJ_Morristown_255272_1906_62500_geo.tif",
+          -74.5,
+          40.75,
+          -74.25,
+          41.0
+        ]
+      ]
+    },
+    "topo1921": {
+      "res": 4,
+      "quads": [
+        [
+          "NY/NJ_Staten%20Island_255396_1900_62500_geo.tif",
+          -74.25,
+          40.5,
+          -74.0,
+          40.75
+        ],
+        [
+          "NJ/NJ_Plainfield_255330_1921_62500_geo.tif",
+          -74.5,
+          40.5,
+          -74.25,
+          40.75
+        ],
+        [
+          "NJ/NJ_Morristown_472450_1906_62500_geo.tif",
+          -74.5,
+          40.75,
+          -74.25,
+          41.0
+        ]
+      ]
+    },
+    "topo1947": {
+      "res": 2,
+      "quads": [
+        [
+          "NJ/NJ_Elizabeth_254344_1947_24000_geo.tif",
+          -74.25,
+          40.625,
+          -74.125,
+          40.75
+        ],
+        [
+          "NJ/NJ_Roselle_254837_1947_24000_geo.tif",
+          -74.375,
+          40.625,
+          -74.25,
+          40.75
+        ],
+        [
+          "NJ/NJ_Caldwell_254218_1947_24000_geo.tif",
+          -74.375,
+          40.75,
+          -74.25,
+          40.875
+        ]
+      ]
+    },
+    "topo1958": {
+      "res": 2,
+      "quads": [
+        [
+          "NJ/NJ_Elizabeth_254346_1955_24000_geo.tif",
+          -74.25,
+          40.625,
+          -74.125,
+          40.75
+        ],
+        [
+          "NJ/NJ_Roselle_254838_1955_24000_geo.tif",
+          -74.375,
+          40.625,
+          -74.25,
+          40.75
+        ],
+        [
+          "NJ/NJ_Caldwell_254220_1954_24000_geo.tif",
+          -74.375,
+          40.75,
+          -74.25,
+          40.875
+        ]
+      ]
+    },
+    "topo1972": {
+      "res": 2,
+      "quads": [
+        [
+          "NJ/NJ_Elizabeth_254345_1955_24000_geo.tif",
+          -74.25,
+          40.625,
+          -74.125,
+          40.75
+        ],
+        [
+          "NJ/NJ_Roselle_254840_1955_24000_geo.tif",
+          -74.375,
+          40.625,
+          -74.25,
+          40.75
+        ],
+        [
+          "NJ/NJ_Caldwell_254221_1954_24000_geo.tif",
+          -74.375,
+          40.75,
+          -74.25,
+          40.875
+        ]
+      ]
+    }
+  },
+  "nj_aerials": [
+    "BlackWhite1930",
+    "Infrared1995",
+    "Natural2007",
+    "Natural2020"
+  ],
+  "_todo": "bbox/map_bbox are approximate until the OpenStreetMap boundary is fetched; realestate/scrapbooks ids await the archives research; verify topo_layers cover the village (it reaches north of 40.75, into the Caldwell/Orange quads)."
+}
