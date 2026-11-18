@@ -90,6 +90,9 @@ if os.path.exists(np_):
 # words that the parser sometimes takes for a surname (directory headings, town and street names, OCR junk)
 BAD = set(w.title() for c in CONF for w in re.sub(r"[^A-Z ]", " ", c).split() if len(w) > 2) | set(TOWN["directories"]["not_surnames"])
 
+HEADINGS = {"Oranges", "Orange", "Directory", "Co", "Inc", "The", "Eo", "So", "Wo", "Newark", "Irvington", "Arlington",
+            "Street", "Avenue", "Road", "Place", "Terrace", "Mrs", "Miss", "Rev", "Dr", "Ampere", "Th", "Name"}
+
 def harmonize(ls):
     """Fix surnames OCR mis-assigned (dropped ditto dash) using the same person's listings in other years.
     Street/town words that slipped in as surnames don't get a vote and are replaced when a real one exists."""
@@ -105,6 +108,9 @@ def harmonize(ls):
         if (n >= 2 and n / len(g) >= 0.6) or n == sum(votes.values()) or (n >= 3 and n >= 2 * second):
             for l in g:
                 if l["surname"] != top: l["surname_ocr"] = l["surname"]; l["surname"] = top
+
+    for l in ls:  # never show a heading word as a family name; keep the given name only
+        if l["surname"] in HEADINGS: l["surname_ocr"] = l["surname"]; l["surname"] = ""
 
 os.makedirs(os.path.join(OUT, "data", "streets"), exist_ok=True)
 index = {}

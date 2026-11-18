@@ -41,11 +41,11 @@
     const byYear = {}; ls.forEach(l => (byYear[l.year] = byYear[l.year] || []).push(l));
     const years = Object.keys(byYear).map(Number).sort((a, b) => a - b);
     const first = years[0], last = years[years.length - 1];
-    const named = l => l.given && /^[A-Z][a-z]/.test(l.given);
+    const named = l => l.given && l.surname && /^[A-Z][a-z]/.test(l.given);
     const firstNamed = ls.find(l => named(l) && l.tenure === "householder") || ls.find(named) || ls[0];
     const head = firstNamed;
     const spans = {};
-    ls.forEach(l => { const s = spans[l.surname] = spans[l.surname] || { min: l.year, max: l.year, n: new Set() }; s.min = Math.min(s.min, l.year); s.max = Math.max(s.max, l.year); s.n.add(l.year); });
+    ls.forEach(l => { if (!l.surname) return; const s = spans[l.surname] = spans[l.surname] || { min: l.year, max: l.year, n: new Set() }; s.min = Math.min(s.min, l.year); s.max = Math.max(s.max, l.year); s.n.add(l.year); });
     const longest = Object.entries(spans).sort((a, b) => (b[1].max - b[1].min) - (a[1].max - a[1].min))[0];
     const fams = Object.values(spans).filter(v => v.n.size >= 2).length;
     const occs = [...new Set(ls.map(l => expandOcc(l.occ).replace(/[^A-Za-z ,.&'-]/g, "")).filter(o => o && o.length > 3 && /^[a-z]/.test(o) && !/^(r|h)\b|widow|^[a-z]{1,2}\b/.test(o)))]
