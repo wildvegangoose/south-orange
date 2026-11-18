@@ -4,8 +4,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const $ = s => document.querySelector(s);
   const G = MW.geo;
   const params = new URLSearchParams(location.search);
-  const station = [40.7310095, -74.2753901];
-  const BBOX = "-74.2924,40.7606,-74.2431,40.7133";
+  const stations = [{ name: "South Orange station", at: [40.74583, -74.26083] }, { name: "Mountain Station", at: [40.75530, -74.25284] }];
+  const BBOX = "-74.2860,40.7650,-74.2320,40.7330";
+  const v1869 = (window.MW_JURISDICTIONS || []).find(j => j.id === "village1869");
 
   MW.leaves($(".house-hero"), 10);
 
@@ -27,21 +28,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function status(html, kind = "") { $("#status").innerHTML = html ? `<div class="status-box ${kind}">${html}</div>` : ""; }
 
-  function inside(lat, lon) {
-    if (!window.MW_BOUNDARY) return true;
-    const r = MW_BOUNDARY.coordinates[0]; let c = false;
-    for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
-      const [xi, yi] = r[i], [xj, yj] = r[j];
-      if (((yi > lat) !== (yj > lat)) && lon < (xj - xi) * (lat - yi) / (yj - yi) + xi) c = !c;
-    }
-    return c;
-  }
+  const inside = (lat, lon) => G.inTown([lat, lon]);
 
   async function locate(q, built, preset) {
     status(`<span class="spinner"></span> Searching old maps for <b>${MW.esc(q)}</b>…`);
     let hit = preset;
     if (!hit) {
-      const query = /maplewood/i.test(q) ? q : q + ", Maplewood, NJ";
+      const query = /south orange/i.test(q) ? q : q + MW.town.geocodeSuffix;
       try {
         const r = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=1&countrycodes=us&viewbox=${BBOX}&bounded=1&q=${encodeURIComponent(query)}`, { headers: { "Accept": "application/json" } });
         const d = await r.json();
@@ -51,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (err) { /* refused or offline: fall back to Photon below */ }
       if (!hit) {
         try { // Photon (komoot), also OpenStreetMap-based, as a fallback geocoder
-          const r = await fetch(`https://photon.komoot.io/api/?limit=1&bbox=-74.2924,40.7133,-74.2431,40.7606&q=${encodeURIComponent(query)}`);
+          const r = await fetch(`https://photon.komoot.io/api/?limit=1&bbox=-74.2860,40.7330,-74.2320,40.7650&q=${encodeURIComponent(query)}`);
           const f = ((await r.json()).features || [])[0];
           if (f) {
             const pr = f.properties, [lon, lat] = f.geometry.coordinates;
@@ -63,12 +56,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     if (!hit) {
-      status(`We couldn't find <b>${MW.esc(q)}</b> in Maplewood. Check the spelling, try just the street name, or <button class="linkish" id="pickMap">pick the spot on a map</button>.`, "warn");
+      status(`We couldn't find <b>${MW.esc(q)}</b> in South Orange. Check the spelling, try just the street name, or <button class="linkish" id="pickMap">pick the spot on a map</button>.`, "warn");
       $("#pickMap").onclick = () => pickOnMap(built);
       return;
     }
-    if (!inside(hit.lat, hit.lon)) status(`Heads up: that spot looks like it is just outside Maplewood's boundary. Here's the story of the nearest Maplewood history anyway.`, "warn");
-    else status(hit.precise === false ? `We found the street but not the exact house number, so the story uses a point on <b>${MW.esc(hit.label)}</b>.` : "");
+    if (!inside(hit.lat, hit.lon)) {
+      // House stories cover today's Village only (docs/DECISIONS.md).
+      status(`<b>${MW.esc(hit.label || q)}</b> is outside today's South Orange Village, so we can't tell its story here. If it's in Maplewood, try <a href="${MW.town.neighbor.url}house.html?q=${encodeURIComponent(q.replace(/,?\s*south orange.*$/i, ""))}">${MW.town.neighbor.name} Through Time</a>. Or <button class="linkish" id="pickMap">pick a spot in South Orange on a map</button>.`, "warn");
+      $("#pickMap").onclick = () => pickOnMap(built);
+      $("#story").hidden = true;
+      return;
+    }
+    status(hit.precise === false ? `We found the street but not the exact house number, so the story uses a point on <b>${MW.esc(hit.label)}</b>.` : "");
     tell(hit, q, built);
   }
 
@@ -77,9 +76,13 @@ document.addEventListener("DOMContentLoaded", () => {
     $("#chapters").innerHTML = ""; $("#neighbors").innerHTML = ""; $("#researchBox").innerHTML = ""; $("#landmarkBanner").innerHTML = "";
     $("#storyTitle").textContent = "Click your spot on the map";
     $("#sectionName").textContent = "Choose a location"; $("#glance").innerHTML = "";
-    const m = ensureMap([40.7315, -74.2715], 14);
-    m.once("click", e => tell({ lat: e.latlng.lat, lon: e.latlng.lng, label: "Your chosen spot", precise: true }, "Your chosen spot", built));
-    status("Click anywhere in Maplewood on the map below.");
+    const m = ensureMap(MW.town.center, 14);
+    const pick = e => {
+      if (!inside(e.latlng.lat, e.latlng.lng)) { status("That spot is outside today's Village. Click inside the dashed line.", "warn"); m.once("click", pick); return; }
+      status(""); tell({ lat: e.latlng.lat, lon: e.latlng.lng, label: "Your chosen spot", precise: true }, "Your chosen spot", built);
+    };
+    m.once("click", pick);
+    status("Click anywhere inside South Orange (the dashed line) on the map below.");
     $("#miniMap").scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
@@ -100,11 +103,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const here = [hit.lat, hit.lon];
     const sec = MW.sections.map(s => ({ s, d: G.distM(here, [s.lat, s.lon]) })).sort((a, b) => a.d - b.d)[0].s;
     const roads = MW.oldRoads.map(r => ({ r, d: G.distToLineM(here, r.pts) })).sort((a, b) => a.d - b.d);
-    const near = MW.places.filter(p => p.id !== "trails").map(p => ({ p, d: G.distM(here, [p.lat, p.lon]) })).sort((a, b) => a.d - b.d);
+    const near = MW.localPlaces().filter(p => !["trail", "turnpike", "horsecar", "township", "charter", "separation", "hpc", "rename2024"].includes(p.id)).map(p => ({ p, d: G.distM(here, [p.lat, p.lon]) })).sort((a, b) => a.d - b.d);
     const landmark = near.find(n => n.p.landmark && n.d < 45);
     const colonialNear = near.filter(n => n.p.kind === "house" && n.p.year < 1800 && n.d > 45)[0];
-    const dStation = G.distM(here, station);
-    const title = hit.label && hit.label !== "Your chosen spot" ? q.replace(/,?\s*maplewood.*$/i, "") : "Your chosen spot";
+    const st = stations.map(x => ({ x, d: G.distM(here, x.at) })).sort((a, b) => a.d - b.d)[0];
+    const dStation = st.d;
+    const in1869 = v1869 ? G.inPolygon(here, v1869.geometry) : true;
+    const stone = MW.places.find(p => p.id === "stonehouse"), dStone = G.distM(here, [stone.lat, stone.lon]);
+    const title = hit.label && hit.label !== "Your chosen spot" ? q.replace(/,?\s*south orange.*$/i, "") : "Your chosen spot";
     const style = built ? MW.styleFor(built) : null;
 
     $("#story").hidden = false;
@@ -112,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
     $("#storyTitle").textContent = title.replace(/\b\w/g, c => c.toUpperCase());
     $("#glance").innerHTML = [
       ["Old road", `${roads[0].r.name.split(" (")[0]}, ${G.fmt(roads[0].d)} away`],
-      ["Station", `${G.walkMin(dStation)} min walk to Maplewood Station`],
+      ["Station", `${G.walkMin(dStation)} min walk to ${st.x.name}`],
       ["Oldest neighbor", colonialNear ? `${colonialNear.p.title} (${colonialNear.p.year}), ${G.fmt(colonialNear.d)}` : "n/a"],
       built ? ["Built", `${built} · ${style.name} era`] : ["Built", `<button class="linkish" id="addYear">Add a year →</button>`]
     ].map(([k, v]) => `<div class="g"><span>${k}</span><b>${v}</b></div>`).join("");
@@ -139,29 +145,29 @@ document.addEventListener("DOMContentLoaded", () => {
     const yb = built;
     const chapters = [
       { y: 1600, k: "Before 1666", h: "Lenape land",
-        t: `Long before there were lots and deeds, this ground was part of Lenapehoking, the Lenape homeland. The closest of the old routes is <b>${roads[0].r.name}</b>, about ${G.fmt(roads[0].d)} from here. Most of the town's main roads follow paths the Lenape walked toward Newark Bay and the mountain gaps.`, s: ["wiki", "dhMtn"] },
-      { y: 1700, k: "1667", h: "Inside the great Newark purchase",
-        t: `In 1667 the Puritan settlers of Newark bought roughly 40,000 acres from the Lenape, from Newark Bay to the Watchung foothills, and your spot was inside it. For decades it was "back country," forest and stony upland a long ox-cart day from town.`, s: ["hmHist"] },
+        t: `Before there were lots and deeds, this ground was part of Lenapehoking, the Lenape homeland. Tradition says South Orange Avenue began as an Indian trail toward Newark Bay. This spot is about ${G.fmt(G.distToLineM(here, MW.oldRoads[0].pts))} from that old path.`, s: ["dhLenape", "soHist", "dhRoads"] },
+      { y: 1690, k: "1666–1705", h: "The Newark Mountains",
+        t: `Newark's settlers bought land reaching to the mountains, and this spot was in their back country. In 1680 the town granted land "upon the upper Chesnut hill by Raway River, near the Stone House." That Stone House, the Old Stone House on South Orange Avenue, is ${G.fmt(dStone)} from here. In 1705 Newark laid out the roads that became South Orange Avenue and Ridgewood Road.`, s: ["shaw", "nrStone"] },
       { y: 1770, k: "The farm years", h: sec.name.replace(/^the /, "").replace(/^\w/, c => c.toUpperCase()),
-        t: sec.colonial + (colonialNear ? ` The closest colonial-era house on our map is the <b>${colonialNear.p.title}</b> (${colonialNear.p.year}) at ${colonialNear.p.address}, ${G.fmt(colonialNear.d)} from here, about a ${G.walkMin(colonialNear.d)}-minute walk.` : ""), s: sec.sources },
-      { y: 1865, k: "1838–1860", h: "The iron horse arrives",
-        t: `The Morris & Essex Railroad came through in 1838. In 1860 John Shedden gave the railroad an acre for a depot and named it <b>Maplewood</b>. From here it would have been about a ${G.walkMin(dStation)}-minute walk (${G.fmt(dStation)}) to the station. ${dStation < 700 ? "That is close enough that this spot was prime ground for the first commuters once farms began to be subdivided in 1868." : "That was a fair hike, so suburban houses came to this area later than to the streets near the depot."}`, s: ["dhMtn", "wiki"] },
-      { y: 1915, k: "1900–1930", h: "From farm to suburb",
-        t: `${sec.growth} Across town, the population went from 5,283 in 1920 to 21,321 in 1930, and the farms around here were replaced by house lots.`, s: sec.sources.concat(["hmHist"]) }
+        t: sec.colonial + (colonialNear ? ` The closest early house on our map is the <b>${colonialNear.p.title}</b> (${colonialNear.p.year}) at ${colonialNear.p.address}, ${G.fmt(colonialNear.d)} from here, about a ${G.walkMin(colonialNear.d)}-minute walk.` : ""), s: sec.sources },
+      { y: 1870, k: "1837–1904", h: "Railroad, township and village",
+        t: `The railroad reached South Orange in 1837. Today the nearest station is ${st.x.name}, about a ${G.walkMin(dStation)}-minute walk (${G.fmt(dStation)}). From 1861 this spot was in South Orange Township, which also covered today's Maplewood. ${in1869 ? "It was inside the Village of South Orange when the Village was chartered in 1869." : "It was <b>outside</b> the Village chartered in 1869, and joined it when the land east of Centre Street was annexed on February 10, 1891."} The Village left the township on March 4, 1904.`, s: ["station", "schnell", "whittemore", "dhSep"] },
+      { y: 1915, k: "1904–1930", h: "From estates to suburb",
+        t: `${sec.growth} Across the Village, the population grew from 7,274 in 1920 to 13,630 in 1930.`, s: sec.sources.concat(["wiki"]) }
     ];
     if (yb) {
-      const pop = MW.populationFor(yb), era = MW.eraFor(yb);
-      const around = MW.places.filter(p => Math.abs(p.year - yb) <= 3 && p.year > 1600).slice(0, 4);
+      const pop = MW.populationFor(yb), era = MW.eraFor(yb), nm = MW.nameFor(yb);
+      const around = MW.localPlaces().filter(p => Math.abs(p.year - yb) <= 3 && p.year > 1600).slice(0, 4);
       const reported = landmark && landmark.p.year && Math.abs(landmark.p.year - yb) > 5 ? ` (The documented date for ${landmark.p.title} is ${landmark.p.year}.)` : "";
       chapters.push({ y: Math.max(yb, 1700), k: String(yb), h: `The year your house went up`,
-        t: `In ${yb} this was <b>${era.name.toLowerCase()}</b>. ${pop.value ? `About ${pop.value.toLocaleString()} people lived in the township.` : `The area held ${pop.label}.`} Houses built in Maplewood around then were often in the <b>${style.name}</b> style: ${style.desc}${reported}` +
-          (around.length ? `<ul class="around">${around.map(p => `<li><b>${p.year}</b>: ${MW.esc(p.title)}</li>`).join("")}</ul>` : ""), s: ["hmStyles"].concat(era.sources.slice(0, 2)) });
+        t: `In ${yb} this was <b>${MW.esc(nm.name)}</b>, ${MW.esc(nm.sub)}, in the era of <b>${era.name.toLowerCase()}</b>. ${pop.value ? `About ${pop.value.toLocaleString()} people lived in the Village.` : `The area held ${pop.label}.`} Houses built in South Orange around then were often <b>${style.name}</b>: ${style.desc}${reported}` +
+          (around.length ? `<ul class="around">${around.map(p => `<li><b>${p.year}</b>: ${MW.esc(p.title)}</li>`).join("")}</ul>` : ""), s: ["masterPlan", "nrMontrose"].concat(era.sources.slice(0, 2)) });
     } else {
       chapters.push({ y: 1926, k: "Your house", h: "When was it built?",
-        t: `Most Maplewood houses date from the boom between 1900 and the 1930s, when builders like Edward Balch and architects like Kenneth Dalzell filled in the old farms. <button class="linkish" id="addYear2">Add your house's year</button> and we'll tell you what Maplewood was like that year and which style was in fashion.`, s: ["hmHist"] });
+        t: `About 85 percent of South Orange's houses date from the late 1800s to the 1930s. <button class="linkish" id="addYear2">Add your house's year</button> and we'll tell you what the town was called that year and which style was in fashion.`, s: ["masterPlan"] });
     }
     chapters.push({ y: 2026, k: "Today", h: "Still here, still changing",
-      t: `Today about 26,000 people live in Maplewood. ${near[0] ? `The nearest place on our map is <b>${near[0].p.title}</b>, ${G.fmt(near[0].d)} away.` : ""} Every house on this street has its own chain of owners, builders and stories, and many of them can be traced at the library.`, s: ["wiki"] });
+      t: `Today about 18,700 people live in South Orange Village. ${near[0] ? `The nearest place on our map is <b>${near[0].p.title}</b>, ${G.fmt(near[0].d)} away.` : ""} Every house has its own chain of owners, builders and stories, and many can be traced through the Oranges city directories and the library's local-history wiki.`, s: ["wiki", "soplHouse"] });
 
     $("#chapters").innerHTML = chapters.map((c, i) => `<article class="chapter" data-y="${c.y}" data-i="${i}">
       <div class="ch-k">${c.k}</div><h3>${MW.esc(c.h)}</h3><p>${c.t}</p><div class="sources">Sources: ${MW.sourceLinks(c.s)}</div></article>`).join("");
@@ -183,22 +189,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // research checklist tailored to the year
     const y = built;
     const steps = [
-      [!y || y >= 1916, "Building permits (1916 to today)", "The Building Department has permits from 1916. The Historic Preservation Commission can tell you which historic permits (1916–1950) exist, which often name the original owner, architect and builder."],
-      [!y || y >= 1907, "Sewer permits (from 1907)", "A sewer-permit log going back to 1907 is kept at the Grasmere Local History Center."],
-      [!y || (y >= 1888 && y <= 1970) || y < 1888, "City directories (1888–1970)", "Look your address up year by year at the Maplewood Memorial Library to see who lived there. Watch for street renumbering."],
-      [true, "The library's real estate file", "A retired local realtor donated listing files that may include old photos of your house. They are digitized on the library site, and the originals are at the Grasmere Center. Not every address has one."],
-      [true, "Fire-insurance & atlas maps", `Atlases from 1850, 1874, 1877, 1890, 1895 (Sanborn), 1904, 1911, 1912, 1928 and 1947 show what stood on each lot. ${y ? `For a ${y} house, compare the atlases just before and after ${y}.` : ""}`],
-      [true, "Deeds", "A title search at the Essex County Hall of Records traces the chain of owners."]
+      [true, "The library's house-research guide", "The South Orange Public Library's local-history wiki explains how to research a house, starting with the Oranges city directories."],
+      [!y || y <= 1970, "City directories", "The Oranges directories list South Orange households (marked \"S O\"). The Maplewood Memorial Library's digital archive has them for 1908–1950. Look up your address year by year, and watch for street renumbering."],
+      [true, "Maps and atlases", `The 1860 county map, Lewis P. Taylor's 1873 map of Montrose, and the Sanborn fire-insurance maps (1912, 1949) show what stood on each lot. ${y ? `For a ${y} house, compare the maps just before and after ${y}.` : ""}`],
+      [true, "Historic districts", "If you're in Montrose Park, the 1997 National Register nomination describes many houses one by one. The Historic Preservation Commission can tell you whether your house is a designated key property."],
+      [true, "Deeds", "A title search at the Essex County Register of Deeds traces the chain of owners."]
     ].filter(s => s[0]);
     $("#researchBox").innerHTML = `<div class="eyebrow">Make it real</div><h2>Find your house's documented history</h2>
-      <p class="muted">This page tells the story of the <em>spot</em>. To learn about your <em>house</em> itself, the Maplewood Memorial Library and Durand-Hedden's Robert H. Grasmere Local History Center are the places to go. Here's where to start${y ? ` for a house built in ${y}` : ""}:</p>
+      <p class="muted">This page tells the story of the <em>spot</em>. To learn about your <em>house</em> itself, start with the South Orange Public Library and the Historical &amp; Preservation Society. ${y ? `For a house built in ${y}, begin here:` : "Begin here:"}</p>
       <ol class="steps">${steps.map(([, h, t]) => `<li><b>${h}</b><span>${t}</span></li>`).join("")}</ol>
-      <div class="sources">Sources: ${MW.sourceLinks(["hmResearch", "library", "libArchive", "dhCenter"])}</div>
+      <div class="sources">Sources: ${MW.sourceLinks(["soplHouse", "nrMontrose", "ordinance"])}</div>
       <a class="btn" href="research.html">Full research guide →</a>`;
 
     MW.observeReveals();
     $("#story").scrollIntoView({ behavior: "smooth" });
-    MW.Archive && MW.Archive.show(hit, q, $("#archive"), { landmark: landmark && landmark.p });
+    MW.Archive && $("#archive") && MW.Archive.show(hit, q, $("#archive"), { landmark: landmark && landmark.p });
   }
 
   // ---------- vignette: one lot through time ----------
@@ -206,11 +211,11 @@ document.addEventListener("DOMContentLoaded", () => {
   function drawArt(built, sec) {
     const host = $("#art");
     const it = K.item;
-    const styleId = built ? MW.styleFor(built).id : "foursquare";
+    const styleId = built ? MW.styleFor(built).id : "tudor";
     const houseFrom = built || 1925;
     const draw = {
-      colonial: () => K.B.stoneHouse(), federal: () => K.B.farmhouse("#ece4d2", 110), queenanne: () => K.B.queenAnne("#7d9a8a"),
-      foursquare: () => K.B.foursquare("#d4b483"), tudor: () => K.B.tudor(), colrev: () => K.B.colonialRev(), cape: () => K.B.cape(), modern: () => K.B.cape("#d8d2c4")
+      colonial: () => K.B.stoneHouse(), cottage: () => K.B.farmhouse("#ece4d2", 110), secondempire: () => K.B.queenAnne("#8f8a72"), queenanne: () => K.B.queenAnne("#7d9a8a"),
+      colrev: () => K.B.colonialRev(), tudor: () => K.B.tudor(), ranch: () => K.B.cape(), modern: () => K.B.cape("#d8d2c4")
     }[styleId];
     const G0 = 330;
     const woods = Array.from({ length: 12 }, (_, i) => it(20 + i * 52 + (i % 2) * 14, G0 - 40 + (i % 3) * 14, 1500, 1720, K.tree.oak(.8 + (i % 3) * .2, ["#3f6b3f", "#4c7a42", "#2f5440"][i % 3]))).join("");
@@ -221,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <circle cx="470" cy="190" r="34" fill="#fff1c4" opacity=".9"/>
       <path d="M0 250 Q120 205 260 228 T600 236 V420 H0Z" fill="#6f8f6a" opacity=".8"/>
       <g class="it" data-from="1740" data-to="1925"><g class="grow"><path d="M0 300 L60 262 H560 L600 300Z" fill="#d6bd6e"/>${Array.from({ length: 6 }, (_, k) => `<path d="M${70 + k * 8} ${270 + k * 5} H${540 - k * 6}" stroke="rgba(80,60,20,.2)" stroke-width="2"/>`).join("")}</g></g>
-      ${it(110, 268, 1740, 1900, sec.id === "north" ? K.B.stoneHouse() : sec.id === "tuscan" ? K.B.cooper() : K.B.farmhouse("#ece4d2", 100), { s: .55 })}
+      ${it(110, 268, 1740, 1900, ["nridgewood", "montrose"].includes(sec.id) ? K.B.stoneHouse() : K.B.farmhouse("#ece4d2", 100), { s: .55 })}
       ${it(200, 270, 1750, 1905, K.B.barn(), { s: .5 })}
       <g class="it veh" data-from="1838" data-to="1930"><g class="grow"><g class="mover train" style="animation-duration:16s"><g transform="translate(0,248) scale(.32)">${K.T.steam()}</g></g></g></g>
       <g class="it veh" data-from="1931" data-to="9999"><g class="grow"><g class="mover train" style="animation-duration:14s"><g transform="translate(0,248) scale(.32)">${K.T.njt()}</g></g></g></g>
