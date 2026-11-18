@@ -46,7 +46,7 @@
         <p class="small">Next door: <a href="${MW.town.neighbor.url}">${MW.town.neighbor.name} Through Time</a>, the history of the township South Orange shared until 1904.</p></div>
       <div><h4>Explore</h4><ul>${pages.map(([h, t]) => `<li><a href="${h}">${t}</a></li>`).join("")}</ul></div>
       <div><h4>The real archives</h4><ul>
-        <li><a href="https://localhistory.sopl.org/" target="_blank" rel="noopener">South Orange Public Library: Local History wiki</a></li>
+        <li><a href="https://localhistory.sopl.org/wiki/Main_Page" target="_blank" rel="noopener">South Orange Public Library: Local History wiki</a></li>
         <li><a href="https://sohps.org/" target="_blank" rel="noopener">South Orange Historical &amp; Preservation Society</a></li>
         <li><a href="https://southorange.org/326/Historic-Preservation-Commission" target="_blank" rel="noopener">Historic Preservation Commission</a></li>
         <li><a href="https://scholarship.shu.edu/" target="_blank" rel="noopener">Seton Hall University Libraries: eRepository</a></li>
