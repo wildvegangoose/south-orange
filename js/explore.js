@@ -12,34 +12,81 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!L) { $("#map").innerHTML = '<p style="padding:2rem">The map library could not load. Check your connection.</p>'; return; }
 
-  const map = L.map("map", { zoomControl: false, scrollWheelZoom: true, minZoom: 13, maxZoom: 18 }).setView([40.7315, -74.2715], 15);
+  const map = L.map("map", { zoomControl: false, scrollWheelZoom: true, minZoom: 13, maxZoom: 18 }).setView(MW.town.center, 15);
   L.control.zoom({ position: "bottomright" }).addTo(map);
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     maxZoom: 19
   }).addTo(map);
 
-  // Township boundary with a soft mask outside
-  if (window.MW_BOUNDARY) {
-    const ring = MW_BOUNDARY.coordinates[0].map(([lon, lat]) => [lat, lon]);
-    L.polygon([[[41, -75], [41, -73.5], [40.4, -73.5], [40.4, -75]], ring], { stroke: false, fillColor: "#f6efdf", fillOpacity: .55, interactive: false }).addTo(map);
-    const b = L.polygon(ring, { color: "#b8381e", weight: 3, dashArray: "8 6", fill: false, interactive: false }).addTo(map);
-    map.fitBounds(b.getBounds(), { padding: [20, 20] });
+  // ---------- Boundaries as they were in the selected year ----------
+  // Outlines for older eras are unions of today's towns (approximate); see data/boundaries.js.
+  const rings = g => (g.type === "MultiPolygon" ? g.coordinates : [g.coordinates]).map(p => p[0].map(([lon, lat]) => [lat, lon]));
+  const today = window.MW_BOUNDARY ? L.polygon(rings(MW_BOUNDARY), { interactive: false }) : null;
+  if (today) map.fitBounds(today.getBounds(), { padding: [20, 20] });
+  map.createPane("jur").style.zIndex = 380;
+  map.getPane("jur").style.pointerEvents = "none";
+  const jurStyle = j => j.id === "village" ? { color: "#b8381e", weight: 3, dashArray: "8 6" }
+    : j.id === "village1869" ? { color: "#b8381e", weight: 3, dashArray: "2 6" }
+    : { color: "#4f3b4a", weight: 3.5, dashArray: "10 7" };
+  const jurLayers = {};
+  const jurLayer = j => jurLayers[j.id] || (jurLayers[j.id] = (() => {
+    const g = L.layerGroup();
+    const r = rings(j.geometry);
+    L.polygon([[[41.2, -75], [41.2, -73.4], [40.3, -73.4], [40.3, -75]], ...r], { pane: "jur", stroke: false, fillColor: "#f6efdf", fillOpacity: j.id.startsWith("village") ? .45 : .3, interactive: false }).addTo(g);
+    const poly = L.polygon(r, Object.assign({ pane: "jur", fill: false, interactive: false, className: "jur-line" }, jurStyle(j))).addTo(g);
+    g._poly = poly;
+    return g;
+  })());
+  let jurShown = [];
+  function setJurisdictions(y) {
+    // Draw only the outermost outline as a mask; inner (village) outlines as lines only.
+    const js = MW.jurisdictionsFor(y);
+    jurShown.forEach(j => { if (!js.includes(j)) jurLayer(j).remove(); });
+    js.forEach((j, i) => {
+      const g = jurLayer(j); g.addTo(map);
+      g.eachLayer(l => { if (l !== g._poly) l.setStyle({ fillOpacity: i === 0 ? (j.id.startsWith("village") ? .45 : .3) : 0 }); });
+    });
+    jurShown = js;
+    return js;
   }
 
+  // Seats of government for the year (square pins). Off-map seats are described in the side box.
+  const seatIcon = L.divIcon({ className: "seat-wrap", html: '<div class="seat-pin"><span>★</span></div>', iconSize: [26, 26], iconAnchor: [13, 13] });
+  const seatMarkers = MW.seats.filter(s => s.lat && !s.offmap).map(s => ({ s, m: L.marker([s.lat, s.lon], { icon: seatIcon, title: s.title, zIndexOffset: 500 })
+    .bindPopup(`<div class="mpop"><span class="tag civic">Seat of government · ${s.from}–${s.to >= 2100 ? "today" : s.to}</span><h3>${MW.esc(s.title)}</h3><div class="small muted" style="margin-bottom:.5rem">📍 ${MW.esc(s.place)}</div><p>${MW.esc(s.text)}</p><div class="sources">Sources: ${MW.sourceLinks(s.sources)}</div></div>`, { maxWidth: 360, className: "mw-popup" }) }));
+
+  function renderJurBox(y, js) {
+    const n = MW.nameFor(y), seats = MW.seatsFor(y);
+    $("#townName").textContent = n.name;
+    $("#townSub").textContent = n.sub;
+    if (y < 1666) { $("#jurBox").innerHTML = `<div class="jb-k">Who governed here</div><p>No colonial government yet. This was Lenapehoking, the Lenape homeland.</p>`; return; }
+    const outer = js[0];
+    $("#jurBox").innerHTML = `<div class="jb-k">Who governed here in ${y}</div>
+      ${js.map(j => `<h3>${MW.esc(j.name)}</h3><p class="small muted">${MW.esc(j.note)}</p>`).join("")}
+      ${seats.map(s => `<p class="jb-seat small"><b>★ ${MW.esc(s.title)}</b>: ${MW.esc(s.place)}.${s.lat && !s.offmap ? ` <button data-seat="${s.id}">Show on map</button>` : ""}</p>`).join("")}
+      <div class="jb-actions">${outer && outer.id !== "village" ? `<button data-fit="${outer.id}">See all of ${MW.esc(outer.name)}</button>` : ""}<button data-fit="today">Back to today's Village</button></div>
+      <p class="small muted">Older outlines are approximate: they are drawn from today's town lines. <span class="sources">${MW.sourceLinks(["tiger"])}</span></p>`;
+  }
+  $("#jurBox").addEventListener("click", e => {
+    const f = e.target.closest("[data-fit]"), st = e.target.closest("[data-seat]");
+    if (f) map.flyToBounds(f.dataset.fit === "today" ? today.getBounds() : jurLayer(MW.jurisdictionsFor(year).find(j => j.id === f.dataset.fit))._poly.getBounds(), { padding: [20, 20], duration: .8 });
+    if (st) { const o = seatMarkers.find(o => o.s.id === st.dataset.seat); map.flyTo(o.m.getLatLng(), 16, { duration: .8 }); setTimeout(() => o.m.openPopup(), 850); }
+  });
+
   // ---------- Historic maps: real dated maps under the pins ----------
-  const BOUNDS = [[40.708, -74.300], [40.766, -74.236]];
+  const BOUNDS = [[40.708, -74.300], [40.778, -74.215]];
   const USGS = 'Historical topographic maps: <a href="https://www.usgs.gov/programs/national-geospatial-program/historical-topographic-maps-preserving-past" target="_blank" rel="noopener">U.S. Geological Survey</a>';
   const NJ = 'Aerial imagery: <a href="https://njgin.nj.gov/" target="_blank" rel="noopener">NJ Office of GIS</a>';
   const HIST = [
-    { year: 1888, type: "img", file: "topo1888", name: "USGS survey map, 1888", note: "Plainfield & Morristown sheets, 1:62,500. Maplewood, Hilton and Headleytown appear as small villages.", attr: USGS },
+    { year: 1888, type: "img", file: "topo1888", name: "USGS survey map, 1888", note: "Plainfield, Morristown & Paterson sheets, 1:62,500. South Orange is a village strung along the railroad and South Orange Avenue.", attr: USGS },
     { year: 1898, type: "img", file: "topo1898", name: "USGS survey map, 1898", note: "1:62,500 survey sheets.", attr: USGS },
-    { year: 1905, type: "img", file: "topo1906", name: "USGS survey map, 1905–06", note: "Plainfield (1905), Morristown (1906) & Staten Island sheets, 1:62,500.", attr: USGS },
-    { year: 1921, type: "img", file: "topo1921", name: "USGS survey map, 1921", note: "1:62,500 survey sheets, just before the 1920s boom.", attr: USGS },
-    { year: 1930, type: "wms", layer: "BlackWhite1930", name: "Aerial photograph, 1930", note: "New Jersey's statewide 1930 aerial survey. Memorial Park is freshly planted beside the station.", attr: NJ },
-    { year: 1947, type: "img", file: "topo1947", name: "USGS topographic map, 1947", note: "Roselle, Caldwell & Elizabeth quadrangles, 1:24,000. Individual buildings are shown.", attr: USGS },
+    { year: 1905, type: "img", file: "topo1906", name: "USGS survey map, 1905–06", note: "Plainfield (1905), Morristown (1906), Paterson (1906 printing) & Staten Island sheets, 1:62,500. The first map after the Village left the township.", attr: USGS },
+    { year: 1921, type: "img", file: "topo1921", name: "USGS survey map, 1921", note: "1:62,500 survey sheets (the Paterson sheet is a 1924 printing), just before the 1920s boom.", attr: USGS },
+    { year: 1930, type: "wms", layer: "BlackWhite1930", name: "Aerial photograph, 1930", note: "New Jersey's statewide 1930 aerial survey, the year Edison's electric trains arrived. The 1916 elevated station sits on its embankment.", attr: NJ },
+    { year: 1947, type: "img", file: "topo1947", name: "USGS topographic map, 1947", note: "Orange, Caldwell, Roselle & Elizabeth quadrangles, 1:24,000. Individual buildings are shown.", attr: USGS },
     { year: 1955, type: "img", file: "topo1958", name: "USGS topographic map, 1955", note: "1:24,000 quadrangles surveyed in 1954–55 (printed 1956–58).", attr: USGS },
-    { year: 1972, type: "img", file: "topo1972", name: "USGS topographic map, 1972 revision", note: "Photo-revised 1:24,000 quadrangles (the east edge is the 1964 Elizabeth sheet).", attr: USGS },
+    { year: 1972, type: "img", file: "topo1972", name: "USGS topographic map, 1972 revision", note: "Photo-revised 1:24,000 quadrangles (Orange 1972; the southeast corner is the 1964 Elizabeth sheet).", attr: USGS },
     { year: 1995, type: "wms", layer: "Infrared1995", name: "Color-infrared aerial, 1995", note: "In infrared photos, healthy trees and lawns show up red.", attr: NJ },
     { year: 2007, type: "wms", layer: "Natural2007", name: "Aerial photograph, 2007", note: "Statewide natural-color aerial imagery.", attr: NJ },
     { year: 2020, type: "wms", layer: "Natural2020", name: "Aerial photograph, 2020", note: "The most recent statewide aerial imagery.", attr: NJ }
@@ -48,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let histOn = true, histOpacity = 1, histCur = null;
   const histLayer = h => h._l || (h._l = h.type === "img"
     ? L.imageOverlay(`img/maps/${h.file}.webp`, BOUNDS, { pane: "hist", opacity: 0, attribution: h.attr, className: "hist-img" })
-    : L.tileLayer.wms(`https://img.nj.gov/imagerywms/${h.layer}`, { layers: h.layer, format: "image/jpeg", version: "1.1.1", pane: "hist", opacity: 0, attribution: h.attr, maxZoom: 19, bounds: [[40.69, -74.33], [40.78, -74.21]] }));
+    : L.tileLayer.wms(`https://img.nj.gov/imagerywms/${h.layer}`, { layers: h.layer, format: "image/jpeg", version: "1.1.1", pane: "hist", opacity: 0, attribution: h.attr, maxZoom: 19, bounds: [[40.69, -74.33], [40.79, -74.20]] }));
   function histFor(y) { return y < 1800 ? null : [...HIST].reverse().find(h => h.year <= y) || HIST[0]; }
   function setHist(y) {
     const h = histOn ? histFor(y) : null;
@@ -67,22 +114,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Historic roads, revealed by date
-  const roadDates = [1500, 1500, 1806, 1700, 1838];
-  const roads = MW.oldRoads.map((r, i) => {
+  const roads = MW.oldRoads.map(r => {
     const line = L.polyline(r.pts, { color: "#e3a33a", weight: 7, opacity: .75, lineCap: "round", className: "oldroad" });
-    line.bindTooltip(r.name + (roadDates[i] > 1500 ? ` · from ${roadDates[i] === 1700 ? "colonial times" : roadDates[i]}` : " · Lenape trail origins"), { sticky: true });
-    return { line, from: roadDates[i] };
+    line.bindTooltip(r.name + (r.from > 1500 ? ` · from ${r.from}` : " · Lenape trail tradition"), { sticky: true });
+    return { line, from: r.from };
   });
 
   // Markers
   const markers = MW.places.map(p => {
     const icon = L.divIcon({
-      className: "pin-wrap",
+      className: "pin-wrap" + (p.scope ? " shared" : ""),
       html: `${p.landmark ? '<div class="pin-ring" style="--c:' + colors[p.kind] + '"></div>' : ""}<div class="pin" style="--c:${colors[p.kind]}"><span>${glyph[p.kind]}</span></div>`,
       iconSize: [34, 42], iconAnchor: [17, 40], popupAnchor: [0, -38]
     });
     const m = L.marker([p.lat, p.lon], { icon, title: p.title, riseOnHover: true });
-    m.bindPopup(`<div class="mpop">${MW.placeCard(p)}<div class="mpop-actions"><a href="house.html?q=${encodeURIComponent(p.address.split(/[;(]/)[0] + ", Maplewood, NJ")}&lat=${p.lat}&lon=${p.lon}&label=${encodeURIComponent(p.title)}">Tell this spot's story →</a></div></div>`, { maxWidth: 360, className: "mw-popup" });
+    const act = p.scope ? `<p class="small muted">Outside today's Village: shown only while it was part of the same township.</p>`
+      : `<a href="house.html?q=${encodeURIComponent(p.address.split(/[;(]/)[0] + MW.town.geocodeSuffix)}&lat=${p.lat}&lon=${p.lon}&label=${encodeURIComponent(p.title)}">Tell this spot's story →</a>`;
+    m.bindPopup(`<div class="mpop">${MW.placeCard(p)}<div class="mpop-actions">${act}</div></div>`, { maxWidth: 360, className: "mw-popup" });
     return { p, m, state: "hidden" };
   });
 
@@ -96,13 +144,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const sep = y < 1900 ? .75 : y < 1950 ? .75 - (y - 1900) / 50 * .5 : y < 2000 ? .25 - (y - 1950) / 50 * .25 : 0;
     document.documentElement.style.setProperty("--tile-filter", `sepia(${sep.toFixed(2)}) saturate(${(1 - sep * .5).toFixed(2)}) contrast(${(1 - sep * .08).toFixed(2)}) brightness(${(1 + sep * .04).toFixed(2)})`);
     const hm = setHist(y);
-    $("#mapBadge").innerHTML = `<b>${y}</b> · ${MW.places.filter(p => p.year <= y && (!p.end || p.end >= y)).length} places${hm ? ` · <span class="bm">${hm.name}</span>` : ""}`;
+    const js = setJurisdictions(y);
+    renderJurBox(y, js);
+    seatMarkers.forEach(({ s, m }) => { if (y >= s.from && y <= s.to) m.addTo(map); else m.remove(); });
+    $("#mapBadge").innerHTML = `<b>${y}</b> · ${MW.localPlaces().filter(p => p.year <= y && (!p.end || p.end >= y)).length} places${hm ? ` · <span class="bm">${hm.name}</span>` : ""}`;
 
     roads.forEach(r => { if (y >= r.from) r.line.addTo(map); else r.line.remove(); });
 
     markers.forEach(o => {
       const { p, m } = o;
-      let st = p.year > y || !active.has(p.kind) ? "hidden" : (p.end && p.end < y ? "ghost" : "on");
+      let st = p.year > y || !active.has(p.kind) ? "hidden" : (p.end && p.end < y ? (p.scope ? "hidden" : "ghost") : "on");
       if (st === o.state) return;
       if (st === "hidden") m.remove(); else {
         m.addTo(map);
@@ -145,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const slider = MW.timeSlider($("#slider"), {
     min: 1600, max: 2026, value: year, chips: false,
-    ticks: [1666, 1750, 1838, 1904, 1950, 2026], onChange: update
+    ticks: [1666, 1806, 1861, 1950, 2026], onChange: update
   });
   update(year);
 

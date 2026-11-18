@@ -30,7 +30,7 @@
     const nav = document.createElement("nav");
     nav.className = "site-nav";
     nav.innerHTML = `<div class="wrap">
-      <a class="brand" href="index.html" aria-label="Maplewood Through Time home">${MW.leafSVG()}<span>Maplewood Through Time<small>A fan history of Maplewood, NJ</small></span></a>
+      <a class="brand" href="index.html" aria-label="${MW.town.siteTitle} home">${MW.leafSVG()}<span>${MW.town.siteTitle}<small>${MW.town.tagline}</small></span></a>
       <button class="nav-toggle" aria-label="Menu">☰</button>
       <ul class="nav-links">${pages.map(([h, t]) => `<li><a href="${h}"${h === here ? ' aria-current="page"' : ""}>${t}</a></li>`).join("")}</ul>
     </div>`;
@@ -40,15 +40,16 @@
     const foot = document.createElement("footer");
     foot.className = "site-footer";
     foot.innerHTML = `<div class="wrap cols">
-      <div><h4>Maplewood Through Time</h4>
-        <p>An unofficial fan site celebrating the history of Maplewood, New Jersey. It is not affiliated with the Township, the Maplewood Memorial Library, the Durand-Hedden House &amp; Garden Association or the Historic Preservation Commission. Their research made this possible, so please support them.</p>
-        <p class="small">Scene illustrations are artistic interpretations, not historical records. Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors.</p></div>
+      <div><h4>${MW.town.siteTitle}</h4>
+        <p>An unofficial fan site celebrating the history of South Orange, New Jersey. It is not affiliated with the Village of South Orange, the South Orange Public Library, the South Orange Historical &amp; Preservation Society, the Historic Preservation Commission or Seton Hall University. Their research made this possible, so please support them.</p>
+        <p class="small">Scene illustrations are artistic interpretations, not historical records. Boundaries before 1904 are approximate. Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors.</p>
+        <p class="small">Next door: <a href="${MW.town.neighbor.url}">${MW.town.neighbor.name} Through Time</a>, the history of the township South Orange shared until 1904.</p></div>
       <div><h4>Explore</h4><ul>${pages.map(([h, t]) => `<li><a href="${h}">${t}</a></li>`).join("")}</ul></div>
       <div><h4>The real archives</h4><ul>
-        <li><a href="https://www.maplewoodlibrary.org/research-maplewood-local-history" target="_blank" rel="noopener">Maplewood Memorial Library</a></li>
-        <li><a href="https://durandhedden.org/history-center" target="_blank" rel="noopener">Grasmere Local History Center</a></li>
-        <li><a href="https://www.durandhedden.org" target="_blank" rel="noopener">Durand-Hedden House &amp; Garden</a></li>
-        <li><a href="https://www.historicmaplewood.com" target="_blank" rel="noopener">Historic Preservation Commission</a></li>
+        <li><a href="https://localhistory.sopl.org/" target="_blank" rel="noopener">South Orange Public Library: Local History wiki</a></li>
+        <li><a href="https://sohps.org/" target="_blank" rel="noopener">South Orange Historical &amp; Preservation Society</a></li>
+        <li><a href="https://southorange.org/326/Historic-Preservation-Commission" target="_blank" rel="noopener">Historic Preservation Commission</a></li>
+        <li><a href="https://scholarship.shu.edu/" target="_blank" rel="noopener">Seton Hall University Libraries: eRepository</a></li>
       </ul></div>
     </div>`;
     document.body.append(foot);

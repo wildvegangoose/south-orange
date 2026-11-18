@@ -5,16 +5,17 @@
   "site_title": "South Orange Through Time",
   "user_agent": "SouthOrangeThroughTime-fansite-research/0.1 (personal, non-commercial; polite crawl)",
   "bbox": {
-    "west": -74.29,
-    "south": 40.733,
-    "east": -74.238,
-    "north": 40.77
+    "west": -74.2832,
+    "south": 40.7356,
+    "east": -74.2347,
+    "north": 40.7623
   },
   "map_bbox": {
-    "west": -74.296,
-    "south": 40.728,
-    "east": -74.232,
-    "north": 40.775
+    "_comment": "Covers today's Village plus the 1861-1903 South Orange Township (today's Maplewood) and Vailsburg's edge, so era outlines sit on aligned historic maps.",
+    "west": -74.3,
+    "south": 40.708,
+    "east": -74.215,
+    "north": 40.778
   },
   "digifind": {
     "_comment": "South Orange residents are in the Oranges city directories hosted on the MAPLEWOOD library's Digifind archive (town code SO). South Orange's own archive collections (if any) go here once known.",
@@ -108,6 +109,13 @@
           40.75,
           -74.25,
           41.0
+        ],
+        [
+          "NJ/NJ_Paterson_255310_1888_62500_geo.tif",
+          -74.25,
+          40.75,
+          -74.0,
+          41.0
         ]
       ]
     },
@@ -133,6 +141,13 @@
           -74.5,
           40.75,
           -74.25,
+          41.0
+        ],
+        [
+          "NJ/NJ_Paterson_255300_1898_62500_geo.tif",
+          -74.25,
+          40.75,
+          -74.0,
           41.0
         ]
       ]
@@ -160,6 +175,13 @@
           40.75,
           -74.25,
           41.0
+        ],
+        [
+          "NJ/NJ_Paterson_255304_1903_62500_geo.tif",
+          -74.25,
+          40.75,
+          -74.0,
+          41.0
         ]
       ]
     },
@@ -185,6 +207,13 @@
           -74.5,
           40.75,
           -74.25,
+          41.0
+        ],
+        [
+          "NJ/NJ_Paterson_255309_1903_62500_geo.tif",
+          -74.25,
+          40.75,
+          -74.0,
           41.0
         ]
       ]
@@ -212,6 +241,13 @@
           40.75,
           -74.25,
           40.875
+        ],
+        [
+          "NJ/NJ_Orange_254673_1947_24000_geo.tif",
+          -74.25,
+          40.75,
+          -74.125,
+          40.875
         ]
       ]
     },
@@ -237,6 +273,13 @@
           -74.375,
           40.75,
           -74.25,
+          40.875
+        ],
+        [
+          "NJ/NJ_Orange_254675_1955_24000_geo.tif",
+          -74.25,
+          40.75,
+          -74.125,
           40.875
         ]
       ]
@@ -264,9 +307,17 @@
           40.75,
           -74.25,
           40.875
+        ],
+        [
+          "NJ/NJ_Orange_254676_1955_24000_geo.tif",
+          -74.25,
+          40.75,
+          -74.125,
+          40.875
         ]
       ]
-    }
+    },
+    "_editions": "Paterson 1903-titled sheets are reprints: 255304 ends 1906, 255309 ends 1924 (ScienceBase End dates). Orange 1955 sheets: 254675 ends 1958, 254676 ends 1972."
   },
   "nj_aerials": [
     "BlackWhite1930",
@@ -274,5 +325,5 @@
     "Natural2007",
     "Natural2020"
   ],
-  "_todo": "bbox/map_bbox are approximate until the OpenStreetMap boundary is fetched; realestate/scrapbooks ids await the archives research; verify topo_layers cover the village (it reaches north of 40.75, into the Caldwell/Orange quads)."
+  "_todo": "realestate (SOPL MediaWiki PDFs) and scrapbooks not wired yet; see docs/research report, implications section."
 }

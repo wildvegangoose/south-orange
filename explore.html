@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Explore the Map · Maplewood Through Time</title>
-  <meta name="description" content="A time-traveling map of historic places in Maplewood, New Jersey.">
+  <title>Explore the Map · South Orange Through Time</title>
+  <meta name="description" content="A time-traveling map of historic places in South Orange, New Jersey, with the town's boundaries and name as they were in each year.">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
@@ -17,14 +17,16 @@
   <aside class="side">
     <div class="side-head">
       <div class="eyebrow">Explore the map</div>
-      <h1>Maplewood in <span id="bigYear">1922</span></h1>
+      <h1><span id="townName">South Orange</span> in <span id="bigYear">1922</span></h1>
+      <p class="town-sub small" id="townSub"></p>
       <p class="muted small" id="eraLine"></p>
     </div>
     <div id="slider" class="side-slider"></div>
     <form id="addrForm" class="addr" action="house.html">
-      <input type="search" name="q" placeholder="Search a Maplewood address…" aria-label="Search a Maplewood address">
+      <input type="search" name="q" placeholder="Search a South Orange address…" aria-label="Search a South Orange address">
       <button class="btn" type="submit" aria-label="Tell this address's story">→</button>
     </form>
+    <div class="jurbox" id="jurBox" aria-live="polite"></div>
     <div class="histbox" id="histBox">
       <div class="hb-head">
         <label class="switch"><input type="checkbox" id="histToggle" checked><span class="track"><span class="knob"></span></span> Historic maps</label>
@@ -39,17 +41,20 @@
       <span><i class="lg on"></i>Standing / happening</span>
       <span><i class="lg ghost"></i>Gone or ended</span>
       <span><i class="lg road"></i>Historic road</span>
+      <span><i class="lg jur"></i>Boundary that year</span>
+      <span><i class="lg seat"></i>Seat of government</span>
     </div>
     <div class="list" id="list"></div>
   </aside>
   <section class="mapwrap">
-    <div id="map" aria-label="Map of historic places in Maplewood"></div>
+    <div id="map" aria-label="Map of historic places in South Orange"></div>
     <div class="map-badge" id="mapBadge"></div>
   </section>
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="data/boundary.js"></script>
+<script src="data/boundaries.js"></script>
 <script src="js/data.js"></script>
 <script src="js/landmarks-data.js"></script>
 <script src="js/common.js"></script>

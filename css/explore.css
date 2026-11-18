@@ -78,3 +78,20 @@
 .hy.on { background: var(--maple); color: #fff; border-color: var(--maple); }
 .hb-note { margin: 0; line-height: 1.45; }
 .map-badge .bm { color: #e9dcc0; }
+
+/* ---------- Jurisdiction of the selected year ---------- */
+.town-sub { margin: .1rem 0 .35rem; color: var(--maple); font-weight: 600; }
+.legend .lg.jur { border-radius: 2px; background: transparent; border: 2px dashed #4f3b4a; }
+.legend .lg.seat { border-radius: 3px; background: #2f4f5a; transform: rotate(45deg) scale(.8); }
+.jurbox { background: #fffdf7; border: 1px solid var(--line); border-left: 4px solid #4f3b4a; border-radius: 14px; padding: .8rem 1rem; display: grid; gap: .4rem; font-size: .9rem; }
+.jurbox h3 { margin: 0; font-size: 1rem; }
+.jurbox .jb-k { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); font-weight: 700; }
+.jurbox p { margin: 0; }
+.jurbox .jb-seat { border-top: 1px dashed var(--line); padding-top: .4rem; }
+.jurbox .jb-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+.jurbox button { font: inherit; font-size: .8rem; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: .25rem .7rem; cursor: pointer; }
+.jurbox button:hover { border-color: #4f3b4a; }
+.jur-label { background: rgba(255,253,247,.92); border: 1px solid #4f3b4a; color: #4f3b4a; font: 700 12px/1.2 Inter, sans-serif; padding: 3px 8px; border-radius: 999px; white-space: nowrap; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
+.seat-pin { width: 26px; height: 26px; background: #2f4f5a; border: 3px solid #fffdf7; border-radius: 6px; transform: rotate(45deg); box-shadow: 0 2px 6px rgba(0,0,0,.35); display: grid; place-items: center; }
+.seat-pin span { transform: rotate(-45deg); color: #fff; font-size: 13px; line-height: 1; }
+.pin-wrap.shared .pin { opacity: .85; filter: grayscale(.35); }

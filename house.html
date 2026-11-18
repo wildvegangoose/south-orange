@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Your House's Story · Maplewood Through Time</title>
-  <meta name="description" content="Enter a Maplewood, NJ address and get a story of that spot through 360 years of history.">
+  <title>Your House's Story · South Orange Through Time</title>
+  <meta name="description" content="Enter a South Orange, NJ address and get a story of that spot through 360 years of history.">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
@@ -19,14 +19,14 @@
     <div class="wrap">
       <div class="eyebrow">Your house's story</div>
       <h1>Every address has a <em>past</em>.</h1>
-      <p class="lede">Type a Maplewood street address. We'll locate it, work out which colonial farm district and old road it sat near, and tell the story of that spot from Lenape trail to today. Add the year your house was built to get a story about that year.</p>
+      <p class="lede">Type a South Orange street address. We'll locate it, work out which neighborhood and old road it sits near, whether it was inside the 1869 Village, and tell the story of that spot from Lenape trail to today. Add the year your house was built to get a story about that year.</p>
       <form id="houseForm" class="house-form card raised">
-        <div class="field grow"><label for="q">Street address in Maplewood</label><input id="q" name="q" type="text" placeholder="e.g. 88 Tuscan Road" autocomplete="street-address" required></div>
+        <div class="field grow"><label for="q">Street address in South Orange</label><input id="q" name="q" type="text" placeholder="e.g. 140 Montrose Avenue" autocomplete="street-address" required></div>
         <div class="field yr"><label for="built">Year built <span class="opt">(optional)</span></label><input id="built" name="built" type="number" min="1700" max="2026" placeholder="e.g. 1926"></div>
         <button class="btn" type="submit">Tell its story <span aria-hidden="true">→</span></button>
       </form>
       <p class="small muted hint">Don't know the year? The Historic Preservation Commission notes that Essex County tax records give a construction date that is about 90% accurate for houses built after 1900. <a href="research.html#steps">More ways to find out →</a></p>
-      <div class="try small">Try: <button data-q="425 Ridgewood Road">425 Ridgewood Road</button><button data-q="88 Tuscan Road">88 Tuscan Road</button><button data-q="10 Durand Road">10 Durand Road</button><button data-q="1688 Springfield Avenue">1688 Springfield Avenue</button></div>
+      <div class="try small">Try: <button data-q="140 Montrose Avenue">140 Montrose Avenue</button><button data-q="44 South Ridgewood Road">44 South Ridgewood Road</button><button data-q="246 Turrell Avenue">246 Turrell Avenue</button><button data-q="262 Grove Road">262 Grove Road</button></div>
     </div>
   </header>
 
@@ -65,12 +65,12 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="data/boundary.js"></script>
+<script src="data/boundaries.js"></script>
 <script src="js/data.js"></script>
 <script src="js/landmarks-data.js"></script>
 <script src="js/common.js"></script>
 <script src="js/scene.js"></script>
 <script src="js/webstories.js"></script>
-<script src="js/archive.js"></script>
 <script src="js/house.js"></script>
 </body>
 </html>
