@@ -6,8 +6,8 @@ loc_image_ids.json lists each volume's IIIF image ids in viewer order (from the 
 import json, os, re
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, "..", "..")
 IDS = json.load(open(os.path.join(HERE, "loc_image_ids.json")))
-VOLS = {"1912": {"label": "1912", "item": "https://www.loc.gov/item/sanborn05629_001/", "res": "g3814sm.g056291912", "svc": "g3814sm_g056291912"},
-        "1949": {"label": "1912–1949 (index of 1947)", "item": "https://www.loc.gov/item/sanborn05629_002/", "res": "g3814sm.g056291949", "svc": "g3814sm_g056291949"}}
+VOLS = {"1912": {"label": "1912", "item": "https://www.loc.gov/item/sanborn05629_001/", "res": "g3814sm.g3814sm_g056291912", "svc": "g3814sm_g056291912"},
+        "1949": {"label": "1912–1949 (index of 1947)", "item": "https://www.loc.gov/item/sanborn05629_002/", "res": "g3814sm.g3814sm_g056291949", "svc": "g3814sm_g056291949"}}
 out = {}
 for y, v in VOLS.items():
     rows = []
