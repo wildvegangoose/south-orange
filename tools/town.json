@@ -325,5 +325,31 @@
     "Natural2007",
     "Natural2020"
   ],
-  "_todo": "realestate (SOPL MediaWiki PDFs) and scrapbooks not wired yet; see docs/research report, implications section."
+  "_todo": "realestate (SOPL MediaWiki PDFs) and scrapbooks not wired yet; see docs/research report, implications section.",
+  "news": {
+    "_comment": "Library of Congress newspaper search (tools/archive/news_loc.py).",
+    "phrases": [
+      "south orange"
+    ],
+    "near": [
+      "south orange",
+      "s. orange"
+    ],
+    "skip_streets": [
+      "MAPLE AVENUE",
+      "MAPLEWOOD AVENUE",
+      "SUMMIT AVENUE",
+      "PARK PLACE",
+      "CHURCH STREET",
+      "FIRST STREET",
+      "SECOND STREET",
+      "THIRD STREET",
+      "FOURTH STREET",
+      "FIFTH STREET",
+      "FRANKLIN PLACE",
+      "WASHINGTON PLACE",
+      "ESSEX AVENUE",
+      "VALLEY STREET"
+    ]
+  }
 }

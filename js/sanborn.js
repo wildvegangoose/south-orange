@@ -26,7 +26,16 @@
       const sheets = [...new Set(use.flatMap(r => r[3]))].filter(s => v.sheets[s]);
       if (!sheets.length) return null;
       return { year: y, label: v.label, item: v.item, sheets, exact, range: exact && hit[0][1] != null ? `${hit[0][1]}–${hit[0][2]}` : "", street: rows[0][0] };
-    }).filter(Boolean);
+    }).filter(Boolean)
+      // Both volumes share one sheet numbering (the 1949 volume is the 1912 survey with pasted-over updates),
+      // so an exact match in one volume locates the address in the other.
+      .map((h, i, all) => {
+        if (h.exact) return h;
+        const ref = all.find(o => o.exact);
+        if (!ref) return h;
+        const v = MW.sanborn[h.year], same = ref.sheets.filter(s => v.sheets[s]);
+        return same.length ? Object.assign({}, h, { sheets: same, exact: true, range: "", via: ref.year }) : h;
+      });
   };
 
   const img = (v, s, w) => `https://tile.loc.gov/image-services/iiif/service:gmd:gmd381m:g3814m:g3814sm:${v.svc}:${v.sheets[s][1]}/full/${w},/0/default.jpg`;
@@ -40,14 +49,14 @@
       const v = MW.sanborn[h.year];
       return h.sheets.slice(0, h.exact ? 2 : 3).map(s => `<figure class="sb-card">
         <a href="${page(v, s)}" target="_blank" rel="noopener"><img src="${img(v, s, 640)}" alt="Sanborn map ${h.year}, sheet ${s}" loading="lazy"></a>
-        <figcaption><b>${h.year === "1912" ? "1912" : "1949"}</b> · sheet ${s}${h.exact ? ` · covers ${h.range} ${esc(nice(h.street))}` : ` · one of the sheets for ${esc(nice(h.street))}`}
+        <figcaption><b>${h.year === "1912" ? "1912" : "1949"}</b> · sheet ${s}${h.via ? ` · same sheet as ${h.via === "1912" ? "1912" : "1949"}` : h.exact ? ` · covers ${h.range} ${esc(nice(h.street))}` : ` · one of the sheets for ${esc(nice(h.street))}`}
           <a href="${page(v, s)}" target="_blank" rel="noopener">Zoom in at the Library of Congress ↗</a></figcaption></figure>`);
     }).join("");
     const exact = hits.some(h => h.exact);
     return `<div class="eyebrow">Fire-insurance maps</div><h2>${opts.title || "This street on the Sanborn maps"}</h2>
       <p class="muted">Sanborn maps were drawn for fire insurers and show every building: yellow for wood frame, pink for brick, blue for stone, with porches, stories and outbuildings. ${exact ? "We matched this address to the sheet in each volume's street index." : "The index doesn't give a number range here, so these are the sheets for this street."} ${number ? "House numbers mostly match today's, but check the numbers written along the street." : ""}</p>
       <div class="sb-grid">${cards}</div>
-      <p class="small muted">Sanborn Map Company, <i>South Orange Village</i>, 1912 and 1912–1949 volumes. Library of Congress, Geography and Map Division, Sanborn Maps Collection (public domain).</p>`;
+      <p class="small muted">${MW.sanbornCredit || "Sanborn Map Company"}. Library of Congress, Geography and Map Division, Sanborn Maps Collection (public domain).</p>`;
   };
   const esc = s => MW.esc(s);
 })();

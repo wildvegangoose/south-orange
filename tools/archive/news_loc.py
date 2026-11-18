@@ -9,7 +9,7 @@ Resumable: finished streets are cached in archive/_tmp/news_loc/<street>.json.
 Usage: python3 news_loc.py [max_pages_per_street]
 """
 import json, os, re, sys, time, html, urllib.request, urllib.parse
-from common import OUT, UA, slug
+from common import OUT, UA, slug, TOWN
 
 MAXP = int(sys.argv[1]) if len(sys.argv) > 1 else 150
 CACHE = os.path.join(OUT, "_tmp", "news_loc"); os.makedirs(CACHE, exist_ok=True)
@@ -18,8 +18,11 @@ if os.environ.get("ONLY"): STREETS = [s for s in STREETS if s in os.environ["ONL
 if os.environ.get("REVERSE"): STREETS = STREETS[::-1]
 SUF = {"AVENUE": r"(?:avenue|ave|av)", "ROAD": r"(?:road|rd)", "STREET": r"(?:street|st)", "PLACE": r"(?:place|pl)",
        "TERRACE": r"(?:terrace|ter|terr)", "DRIVE": r"(?:drive|dr)", "COURT": r"(?:court|ct)", "LANE": r"(?:lane|la|ln)", "WAY": r"way"}
-SKIP = {"MAPLE AVENUE", "MAPLEWOOD AVENUE", "SUMMIT AVENUE", "PARK PLACE", "CHURCH STREET", "FIRST STREET", "SECOND STREET",
-        "THIRD STREET", "FOURTH STREET", "FIFTH STREET", "FRANKLIN PLACE", "WASHINGTON PLACE", "ESSEX AVENUE", "VALLEY STREET"}
+NEWS = TOWN.get("news", {})
+PHRASES = NEWS.get("phrases", [TOWN["name"].lower()])          # e.g. ["south orange"] or ["maplewood", "hilton"]
+NEAR = re.compile("|".join(r"\s*".join(map(re.escape, p.split())) for p in NEWS.get("near", PHRASES)), re.I)
+STATES = NEWS.get("states")                                     # optional loc.gov location_state filter
+SKIP = set(NEWS.get("skip_streets", []))   # street names too common to search usefully
 
 def get(url, tries=4, binary=False):
     for i in range(tries):
@@ -33,7 +36,9 @@ def get(url, tries=4, binary=False):
 def search(phrase):
     out, sp = [], 1
     while len(out) < MAXP:
-        q = urllib.parse.urlencode({"q": f'"south orange" "{phrase}"', "dates": "1869/1963", "fo": "json", "c": 100, "sp": sp})
+        params = {"q": f'"{PHRASES[0]}" "{phrase}"', "dates": NEWS.get("dates", "1869/1963"), "fo": "json", "c": 100, "sp": sp}
+        if STATES: params["fa"] = "location_state:" + "|location_state:".join(STATES)
+        q = urllib.parse.urlencode(params)
         t = get("https://www.loc.gov/collections/chronicling-america/?" + q); time.sleep(3)
         if not t: break
         try: d = json.loads(t)
@@ -76,7 +81,7 @@ def mentions(street, alto, iiif):
     name, suf = (core[0], SUF.get(core[1], re.escape(core[1].lower()))) if len(core) == 2 and core[1] in SUF else (street, "")
     nm = r"\s+".join(re.escape(x) for x in name.lower().split())
     pats = [re.compile(rf"\b(\d{{1,4}})\s+{nm}\.?\s*{suf}\b", re.I), re.compile(rf"\b{nm}\.?\s*{suf}\.?,?\s+(?:No\.?\s*)?(\d{{1,4}})\b", re.I)]
-    so = [m.start() for m in re.finditer(r"south\s*orange|s\.\s*orange", text, re.I)]
+    so = [m.start() for m in NEAR.finditer(text)]
     out = []
     for p in pats:
         for m in p.finditer(text):

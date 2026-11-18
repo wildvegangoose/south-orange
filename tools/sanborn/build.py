@@ -23,6 +23,6 @@ for y, v in VOLS.items():
         if m: sheets[int(m.group(1))] = [i, iid]
     out[y] = dict(v, rows=rows, sheets=sheets)
 js = ("/* Sanborn fire-insurance maps of South Orange Village (Library of Congress, public domain). Built by tools/sanborn/build.py. */\n"
-      "var MW = window.MW = window.MW || {};\nMW.sanborn = " + json.dumps(out, separators=(",", ":")) + ";\n")
+      "var MW = window.MW = window.MW || {};\nMW.sanbornCredit = \"Sanborn Map Company, <i>South Orange Village</i>, 1912 and 1912–1949 volumes\";\nMW.sanborn = " + json.dumps(out, separators=(",", ":")) + ";\n")
 open(os.path.join(ROOT, "js", "sanborn-data.js"), "w").write(js)
 print({y: (len(o["rows"]), len(o["sheets"])) for y, o in out.items()})
