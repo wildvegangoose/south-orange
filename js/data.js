@@ -112,7 +112,7 @@ MW.nameFor = y => MW.names.find(n => y >= n.from && y <= n.to) || MW.names[MW.na
 /* Seats of local government: where the town's business was done in each era.
    Pins outside today's Village appear only while that jurisdiction existed. */
 MW.seats = [
-  { id: "seat-newark", from: 1666, to: 1806, title: "Newark town meeting", place: "Newark's meeting house on Broad Street, about 6 miles east (off this map)",
+  { id: "seat-newark", from: 1666, to: 1806, title: "Newark town meeting", place: "Newark's meeting house on Broad Street, about 6 miles east",
     lat: 40.7357, lon: -74.1714, offmap: true,
     text: "For its first 140 years this corner of the mountain was governed by Newark's town meeting. Newark voted the 1680 land grants \"near the Stone House\" and laid out today's South Orange Avenue and Ridgewood Road as roads in 1705.",
     sources: ["shaw", "newark"] },

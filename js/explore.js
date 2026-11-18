@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!L) { $("#map").innerHTML = '<p style="padding:2rem">The map library could not load. Check your connection.</p>'; return; }
 
-  const map = L.map("map", { zoomControl: false, scrollWheelZoom: true, minZoom: 13, maxZoom: 18 }).setView(MW.town.center, 15);
+  const map = L.map("map", { zoomControl: false, scrollWheelZoom: true, minZoom: 11, maxZoom: 18 }).setView(MW.town.center, 15);
   L.control.zoom({ position: "bottomright" }).addTo(map);
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     g._poly = poly;
     return g;
   })());
+  const refToday = today ? L.polygon(rings(MW_BOUNDARY), { pane: "jur", color: "#7a6e62", weight: 2, dashArray: "2 6", fill: false, interactive: false }) : null;
   let jurShown = [];
   function setJurisdictions(y) {
     // Draw only the outermost outline as a mask; inner (village) outlines as lines only.
@@ -48,30 +49,31 @@ document.addEventListener("DOMContentLoaded", () => {
       g.eachLayer(l => { if (l !== g._poly) l.setStyle({ fillOpacity: i === 0 ? (j.id.startsWith("village") ? .45 : .3) : 0 }); });
     });
     jurShown = js;
+    if (refToday) { if (js.length) refToday.remove(); else refToday.addTo(map); }
     return js;
   }
 
   // Seats of government for the year (square pins). Off-map seats are described in the side box.
   const seatIcon = L.divIcon({ className: "seat-wrap", html: '<div class="seat-pin"><span>★</span></div>', iconSize: [26, 26], iconAnchor: [13, 13] });
-  const seatMarkers = MW.seats.filter(s => s.lat && !s.offmap).map(s => ({ s, m: L.marker([s.lat, s.lon], { icon: seatIcon, title: s.title, zIndexOffset: 500 })
+  const seatMarkers = MW.seats.filter(s => s.lat).map(s => ({ s, m: L.marker([s.lat, s.lon], { icon: seatIcon, title: s.title, zIndexOffset: 500 })
     .bindPopup(`<div class="mpop"><span class="tag civic">Seat of government · ${s.from}–${s.to >= 2100 ? "today" : s.to}</span><h3>${MW.esc(s.title)}</h3><div class="small muted" style="margin-bottom:.5rem">📍 ${MW.esc(s.place)}</div><p>${MW.esc(s.text)}</p><div class="sources">Sources: ${MW.sourceLinks(s.sources)}</div></div>`, { maxWidth: 360, className: "mw-popup" }) }));
 
   function renderJurBox(y, js) {
     const n = MW.nameFor(y), seats = MW.seatsFor(y);
     $("#townName").textContent = n.name;
     $("#townSub").textContent = n.sub;
-    if (y < 1666) { $("#jurBox").innerHTML = `<div class="jb-k">Who governed here</div><p>No colonial government yet. This was Lenapehoking, the Lenape homeland.</p>`; return; }
+    if (y < 1666) { $("#jurBox").innerHTML = `<div class="jb-k">Who governed here</div><p>No colonial government yet. This was Lenapehoking, the Lenape homeland. The faint dotted line shows today's Village for reference.</p>`; return; }
     const outer = js[0];
     $("#jurBox").innerHTML = `<div class="jb-k">Who governed here in ${y}</div>
       ${js.map(j => `<h3>${MW.esc(j.name)}</h3><p class="small muted">${MW.esc(j.note)}</p>`).join("")}
-      ${seats.map(s => `<p class="jb-seat small"><b>★ ${MW.esc(s.title)}</b>: ${MW.esc(s.place)}.${s.lat && !s.offmap ? ` <button data-seat="${s.id}">Show on map</button>` : ""}</p>`).join("")}
+      ${seats.map(s => `<p class="jb-seat small"><b>★ ${MW.esc(s.title)}</b>: ${MW.esc(s.place)}.${s.lat ? ` <button data-seat="${s.id}">Show on map</button>` : ""}</p>`).join("")}
       <div class="jb-actions">${outer && outer.id !== "village" ? `<button data-fit="${outer.id}">See all of ${MW.esc(outer.name)}</button>` : ""}<button data-fit="today">Back to today's Village</button></div>
       <p class="small muted">Older outlines are approximate: they are drawn from today's town lines. <span class="sources">${MW.sourceLinks(["tiger"])}</span></p>`;
   }
   $("#jurBox").addEventListener("click", e => {
     const f = e.target.closest("[data-fit]"), st = e.target.closest("[data-seat]");
     if (f) map.flyToBounds(f.dataset.fit === "today" ? today.getBounds() : jurLayer(MW.jurisdictionsFor(year).find(j => j.id === f.dataset.fit))._poly.getBounds(), { padding: [20, 20], duration: .8 });
-    if (st) { const o = seatMarkers.find(o => o.s.id === st.dataset.seat); map.flyTo(o.m.getLatLng(), 16, { duration: .8 }); setTimeout(() => o.m.openPopup(), 850); }
+    if (st) { const o = seatMarkers.find(o => o.s.id === st.dataset.seat); map.flyTo(o.m.getLatLng(), o.s.offmap ? 14 : 16, { duration: .8 }); setTimeout(() => o.m.openPopup(), 850); }
   });
 
   // ---------- Historic maps: real dated maps under the pins ----------
@@ -147,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const js = setJurisdictions(y);
     renderJurBox(y, js);
     seatMarkers.forEach(({ s, m }) => { if (y >= s.from && y <= s.to) m.addTo(map); else m.remove(); });
-    $("#mapBadge").innerHTML = `<b>${y}</b> · ${MW.localPlaces().filter(p => p.year <= y && (!p.end || p.end >= y)).length} places${hm ? ` · <span class="bm">${hm.name}</span>` : ""}`;
+    $("#mapBadge").innerHTML = `<b>${y}</b> · ${(n => `${n} place${n === 1 ? "" : "s"}`)(MW.localPlaces().filter(p => p.year <= y && (!p.end || p.end >= y)).length)}${hm ? ` · <span class="bm">${hm.name}</span>` : ""}`;
 
     roads.forEach(r => { if (y >= r.from) r.line.addTo(map); else r.line.remove(); });
 

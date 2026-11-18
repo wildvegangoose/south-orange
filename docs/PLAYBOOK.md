@@ -114,6 +114,23 @@ python3 build_index.py    # merge -> archive/data/street_index.json + archive/da
 4. **New Jersey aerials** stream live from the NJ Office of GIS WMS (`https://img.nj.gov/imagerywms/<Layer>`): BlackWhite1930, Infrared1995, Infrared2002, Natural2007/2010/2012/2015/2017/2020. Other states have similar services.
 5. In `js/explore.js`, edit the `HIST` list (year, file or WMS layer, caption) and `BOUNDS`.
 
+## 5b. Boundaries and names that change with the year (`tools/boundaries/build_eras.py`)
+
+Older towns often belonged to larger townships before they were incorporated. South Orange was Newark Township,
+then Orange Township, then split with Clinton Township, then South Orange Township (with today's Maplewood) before 1904.
+
+* No historic boundary files exist, so `build_eras.py` builds each era's outline as a **union of today's
+  municipalities** from Census TIGERweb (county subdivisions, layer 22) with shapely, plus hand clips where a
+  documented line exists (South Orange: east of Centre Street, annexed 1891). Label every outline "approximate".
+* `MW.names` / `MW.nameFor(year)` in `js/data.js` gives the name in use; the Explore heading, the Time Machine name
+  card and the house story all read it.
+* `MW.seats` lists where the town's business was done in each era (meeting houses, rented rooms, town halls). Seats
+  outside the town show only while that jurisdiction existed. If the record is silent, say so (lat: null).
+* Places that belong to the shared township but lie outside today's town get `scope: "township"`: they show on the
+  map only for those years, never in house stories, counts or the timeline (`MW.localPlaces()`).
+* Make `map_bbox` in `tools/town.json` cover the largest era you want overlays for (South Orange: the 1861 township),
+  so the dated maps stay aligned under every outline.
+
 ## 6. Landmark pages (`js/landmarks-data.js`, `tools/landmarks/`)
 
 - **Research each landmark separately** (see the sources in §2). The preservation commission's designation reports gave exact addresses, owner chains and dates. Each entry has `sections`, `facts`, `timeline`, `photos`, `photoLinks` and `sources`.

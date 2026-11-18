@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const v = L[id];
   if (!v) { $("#lm").innerHTML = `<section class="section"><div class="wrap"><h1>Landmark not found</h1><p><a href="landmarks.html">See all landmarks →</a></p></div></section>`; return; }
-  document.title = `${v.name} · Maplewood Through Time`;
+  document.title = `${v.name} · ${MW.town.siteTitle}`;
   const hero = (v.photos && v.photos.find(p => p.hero)) || (v.photos && v.photos[0]);
   const ages = AGES.map(([y, kind, label]) => ({ y: +y, kind, label, src: `img/ages/${id}/${y}-${kind}.jpg` }));
 
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <aside class="lm-side">
         <div class="card lm-tl reveal"><h3>Timeline</h3><ol>${v.timeline.map(t => `<li><b>${esc(String(t.y))}</b><span>${esc(t.t)}</span></li>`).join("")}</ol></div>
         <div class="card reveal"><h3>On the map</h3><div id="lmMap" class="lm-map"></div>
-          <p class="small"><a href="${v.place ? `explore.html?place=${v.place}&year=${Math.max(1888, v.built)}` : "explore.html"}">Open in Explore the Map →</a> · <a href="house.html?q=${encodeURIComponent(v.address.split(/[(;]/)[0] + ", Maplewood, NJ")}">House story →</a></p></div>
+          <p class="small"><a href="${v.place ? `explore.html?place=${v.place}&year=${Math.max(1888, v.built)}` : "explore.html"}">Open in Explore the Map →</a> · <a href="house.html?q=${encodeURIComponent(v.address.split(/[(;]/)[0] + MW.town.geocodeSuffix)}">House story →</a></p></div>
       </aside>
     </div>
   </section>
@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const h = (await r.json()).houses[m[1]]; if (!h) return;
       const items = (h.news || []).slice(0, 6), cards = (h.cards || []).slice(0, 2);
       if (!items.length && !cards.length) return;
-      document.querySelector(".lm-sources").insertAdjacentHTML("beforebegin", `<section class="section"><div class="wrap"><div class="eyebrow">From the Maplewood Memorial Library's archive</div><h2>Documents</h2>
+      document.querySelector(".lm-sources").insertAdjacentHTML("beforebegin", `<section class="section"><div class="wrap"><div class="eyebrow">From the library archive</div><h2>Documents</h2>
         <div class="news-grid">${cards.map(c => `<a class="clip" href="${c.src}" target="_blank" rel="noopener"><img src="archive/${c.img}" alt="Real-estate listing card" loading="lazy"><span class="doc-cap">Real-estate listing card</span></a>`).join("")}
         ${items.map(c => `<a class="clip" href="${c.src}" target="_blank" rel="noopener"><span class="doc-year">${c.year}</span><img src="archive/${c.crop}" alt="Clipping ${c.year}" loading="lazy"><span class="doc-cap">Scrapbook clipping, ${c.year}</span></a>`).join("")}</div></div></section>`);
     } catch (e) { /* archive not present */ }

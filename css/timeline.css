@@ -37,3 +37,4 @@
   .tl-year { font-size: 2.4rem; } .tl-era { margin: 0; font-size: 1rem; }
   .tl-scene, .era-jump { display: none; }
 }
+.tl-names { opacity: .85; margin-top: .3rem; }

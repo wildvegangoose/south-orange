@@ -9,11 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
   function render() {
     let html = "";
     MW.eras.forEach(era => {
-      const items = MW.places.filter(p => p.year >= era.from && p.year <= era.to && active.has(p.kind));
+      const items = MW.localPlaces().filter(p => p.year >= era.from && p.year <= era.to && active.has(p.kind));
       html += `<section class="tl-era-block" id="era-${era.id}" data-y="${Math.max(era.from, 1600)}">
         <div class="tl-era-head reveal" style="--a:${era.palette[0]};--b:${era.palette[1]}">
           <div class="eyebrow">${era.from < 1600 ? "Before 1666" : era.from + "–" + (era.id === "today" ? "today" : era.to)}</div>
-          <h2>${era.name}</h2><p class="tag-line">${era.tagline}</p><p>${MW.esc(era.story[0])}</p>
+          <h2>${era.name}</h2><p class="tag-line">${era.tagline}</p><p class="tl-names small"><b>Called:</b> ${[...new Set(MW.names.filter(n => n.to >= era.from && n.from <= era.to).map(n => n.name))].map(MW.esc).join(" → ")}</p><p>${MW.esc(era.story[0])}</p>
         </div>
         ${items.map((p, i) => `<article class="tl-item reveal ${i % 2 ? "r" : "l"}" data-y="${p.year}" id="ev-${p.id}">
           <div class="tl-dot"><span>${p.year < 1600 ? "∞" : p.year}</span></div>
@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (y === current) return; current = y;
     $("#tlYear").textContent = y <= 1600 ? "Pre-1666" : y;
     const era = MW.eraFor(y);
-    $("#tlEra").textContent = era.name;
+    $("#tlEra").textContent = `${era.name} · ${MW.nameFor(Math.max(1500, y)).name}`;
     document.querySelectorAll("#eraJump a").forEach(a => a.classList.toggle("on", a.dataset.era === era.id));
     scene.setYear(Math.max(1600, y));
   }
