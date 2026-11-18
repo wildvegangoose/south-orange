@@ -20,6 +20,7 @@ var MW = window.MW = window.MW || {};
       name: "Old Stone House", type: "Colonial stone house", kind: "house", place: "stonehouse", built: 1680, builtLabel: "before 1680; stone wing 1773–91",
       address: "201 South Orange Avenue (formerly 219)", lat: 40.74500, lon: -74.25361,
       designation: "National Register 1991 · NJ Register 1991 · local landmark",
+      photos: [{ src: "img/landmarks/stonehouse.jpg", hero: true, year: 2016, caption: "The Stone House by the Stone House Brook", credit: "Jerrye & Roy Klotz / Wikimedia Commons", license: "CC BY-SA 4.0", link: "https://commons.wikimedia.org/wiki/File:STONE_HOUSE_BY_THE_STONE_BROOK,_SOUTH_ORANGE,_ESSEX_COUNTY,_NJ.jpg" }],
       tagline: "The house the town grew up around: named in a 1680 land grant, enlarged by Bethuel Pierson, and the only pre-1800 building left in the Village.",
       sections: [
         { h: "\"Near the Stone House\"", p: [
@@ -128,6 +129,7 @@ var MW = window.MW = window.MW || {};
       name: "Kelly Carriage House", type: "Estate carriage house", kind: "house", place: "kelly", built: 1887, builtLabel: "1887",
       address: "Seton Hall University, South Orange Avenue", lat: 40.7425, lon: -74.2462, approx: true,
       designation: "National Register 1975 · NJ Register 1980 · local landmark", architect: "John E. Baker",
+      photos: [{ src: "img/landmarks/kelly.jpg", hero: true, year: 2020, caption: "The Kelly Carriage House, now the Monella Art Center", credit: "Marielouiseleone / Wikimedia Commons", license: "CC BY-SA 4.0", link: "https://commons.wikimedia.org/wiki/File:Eugene_V._Kelly_Carriage_House_front_view.jpg" }],
       tagline: "All that is left of a banker's Queen Anne estate: a brick carriage house with a romantic stair turret, now an art gallery.",
       sections: [
         { h: "A banker's country place", p: [
@@ -167,6 +169,7 @@ var MW = window.MW = window.MW || {};
       name: "Seton Hall's Chapel and Presidents Hall", type: "College buildings", kind: "culture", place: "chapel", built: 1863, builtLabel: "1860–1870",
       address: "400 South Orange Avenue", lat: 40.74221, lon: -74.24789,
       designation: "Chapel: local landmark (2016 ordinance)", architect: "Jeremiah O'Rourke (search snippets only)",
+      photos: [{ src: "img/landmarks/setonhall.jpg", hero: true, year: 1997, caption: "Presidents Hall, Seton Hall University", credit: "Bmzuckerman / Wikimedia Commons", license: "CC BY 4.0", link: "https://commons.wikimedia.org/wiki/File:Victorian_Gothic_-_South_Orange,_NJ_-_Seton_Hall_University_(Presidents_Hall)_(1).jpg" }],
       tagline: "The college that moved to a 60-acre estate in 1860 and grew into a university around its chapel.",
       sections: [
         { h: "From Madison to South Orange", p: [
