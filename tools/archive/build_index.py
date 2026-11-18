@@ -101,8 +101,8 @@ def harmonize(ls):
         if len(g) < 2: continue
         votes = collections.Counter(l["surname"] for l in g if l["surname"] not in BAD)
         if not votes: continue
-        top, n = votes.most_common(1)[0]
-        if (n >= 2 and n / len(g) >= 0.6) or n == sum(votes.values()):
+        (top, n), second = votes.most_common(1)[0], (votes.most_common(2)[1][1] if len(votes) > 1 else 0)
+        if (n >= 2 and n / len(g) >= 0.6) or n == sum(votes.values()) or (n >= 3 and n >= 2 * second):
             for l in g:
                 if l["surname"] != top: l["surname_ocr"] = l["surname"]; l["surname"] = top
 

@@ -9,7 +9,7 @@ var MW = window.MW = window.MW || {};
 MW.town = {
   name: "South Orange", state: "NJ", siteTitle: "South Orange Through Time",
   tagline: "A fan history of South Orange, NJ",
-  center: [40.7490, -74.2590], geocodeSuffix: ", South Orange, NJ",
+  center: [40.7490, -74.2590], geocodeSuffix: ", South Orange, NJ", todayLabel: "today's Village",
   neighbor: { name: "Maplewood", url: "https://wildvegangoose.github.io/maplewood/" }
 };
 

@@ -128,7 +128,8 @@ def parse_part(y, path_url):
     return out
 
 def crop(pdf, y, rows):
-    from PIL import Image
+    from PIL import Image, ImageFile
+    ImageFile.LOAD_TRUNCATED_IMAGES = True   # a few rendered pages come back cut short
     want = {}
     for r in rows:
         if r["tenure"] != "householder" or not r["street"]: continue
