@@ -59,6 +59,13 @@
     return t;
   }
 
+  // a short window of OCR text around the house number
+  function snip(t, num) {
+    const i = Math.max(0, (t || "").search(new RegExp("\\b" + num + "\\b")));
+    const s = t.slice(Math.max(0, i - 140), i + 180);
+    return (i > 140 ? "…" : "") + s.replace(/^\S*\s/, "") + "…";
+  }
+
   function render(el, addr, street, num, house, streetData) {
     const ls = (house && house.listings) || [], cards = (house && house.cards) || [], news = (house && house.news) || [];
     const byYear = {}; ls.forEach(l => (byYear[l.year] = byYear[l.year] || []).push(l));
@@ -69,10 +76,10 @@
 
     el.innerHTML = `<div class="wrap">
       <div class="arch-head reveal">
-        <div class="eyebrow">From the Maplewood Memorial Library's digital archive</div>
+        <div class="eyebrow">From the city directories and old newspapers</div>
         <h2>The record for ${esc(addr)}</h2>
         <p class="lede">${ls.length ? story(addr, ls) : `The library's city directories don't list this exact number through 1950. The house may be newer, the number may have changed, or the scanned text may have garbled it.`}</p>
-        <p class="arch-local small">Material from the Maplewood Memorial Library's digitized city directories and real-estate file, with links back to the originals. Names are shown through 1950.</p>
+        <p class="arch-local small">Residents come from the Oranges city directories in the Maplewood Memorial Library's digital archive, which list South Orange households with the code "SO". Newspaper mentions come from the Library of Congress's Chronicling America collection (public domain). Every item links back to the original. Directory names are shown through 1950.</p>
       </div>
       <div class="arch-grid ${cards.length ? "" : "nophoto"}">
         ${cards.length ? `<figure class="photo-card reveal">${cards.map((c, i) => `<div class="pc ${i ? "hidden" : ""}" data-i="${i}">
@@ -92,8 +99,10 @@
           <p class="small muted">The text was read by computer from the scans, so names can be misspelled. The scanned lines below, and the "scan ↗" links, show the originals.</p>
         </div>
       </div>
-      ${news.length ? `<div class="news reveal"><h3>In the news</h3><p class="small muted">Newspaper clippings from the library's scrapbooks that mention this address. Click one to open the scrapbook page.</p>
-        <div class="news-grid">${news.slice(0, 6).map(n => `<a class="clip" href="${n.src}" target="_blank" rel="noopener"><span class="doc-year">${n.year}</span><img src="${ROOT + n.crop}" alt="Newspaper clipping, ${n.year}" loading="lazy"><span class="doc-cap">Scrapbook, ${n.year}</span></a>`).join("")}</div></div>` : ""}
+      ${news.length ? `<div class="news reveal"><h3>In the news</h3><p class="small muted">Newspaper pages that mention this address, cropped from the scans. The text under each was read by computer, so expect typos. Click one to open the full page at the Library of Congress.</p>
+        <div class="news-grid">${news.slice().sort((a, b) => (a.kind === "ad") - (b.kind === "ad") || a.year - b.year).slice(0, 8).map(n => n.iiif
+          ? `<a class="clip loc" href="${n.src}" target="_blank" rel="noopener"><span class="doc-year">${n.year}</span><img src="${n.iiif}" alt="Newspaper page, ${n.date}" loading="lazy"><span class="doc-cap">${n.kind === "ad" ? "Classified ad · " : ""}${esc(nice(n.paper || "newspaper").replace(/\s*\(.*$/, ""))}, ${esc(n.date)}</span><span class="clip-snip">${esc(snip(n.snippet, num))}</span></a>`
+          : `<a class="clip" href="${n.src}" target="_blank" rel="noopener"><span class="doc-year">${n.year}</span><img src="${ROOT + n.crop}" alt="Newspaper clipping, ${n.year}" loading="lazy"><span class="doc-cap">Scrapbook, ${n.year}</span></a>`).join("")}</div></div>` : ""}
       ${docs.length ? `<div class="docs reveal"><h3>Documents from the era</h3><p class="small muted">The actual directory lines for this address, cropped from the library's scans. Click one to open the full page.</p>
         <div class="doc-strip">${docs.map(l => `<a class="doc" href="${l.src}" target="_blank" rel="noopener"><span class="doc-year">${l.year}</span><img src="${ROOT + l.crop}" alt="Directory line, ${l.year}" loading="lazy"><span class="doc-cap">${l.year} city directory</span></a>`).join("")}</div></div>` : ""}
     </div>`;

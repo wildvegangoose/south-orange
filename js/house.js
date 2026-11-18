@@ -131,6 +131,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (stories.length) $("#landmarkBanner").insertAdjacentHTML("beforeend", `<div class="web-stories reveal"><div class="eyebrow">Stories about this house</div>
       <div class="ws-grid">${stories.map(st => `<a class="ws card" href="${st.url}" target="_blank" rel="noopener"><span class="tag event">${MW.esc(st.tag)}</span><h3>${MW.esc(st.title)}</h3><p>${MW.esc(st.summary)}</p>${st.evidence ? `<p class="ws-ev">📒 ${MW.esc(st.evidence)}</p>` : ""}<span class="small muted">${MW.esc(st.source)} ↗</span></a>`).join("")}</div></div>`);
 
+    // historic photographs of this house (Library of Congress)
+    const hp = MW.housePhotosFor ? MW.housePhotosFor(hit.number || (qm && qm[1]), hit.road || (qm && qm[2])) : [];
+    if (hp.length) $("#landmarkBanner").insertAdjacentHTML("beforeend", `<div class="web-stories reveal"><div class="eyebrow">Historic photographs of this house</div>
+      <div class="sb-grid">${hp.map(p => `<figure class="sb-card"><a href="${p.link}" target="_blank" rel="noopener"><img src="${p.src}" alt="${MW.esc(p.caption)}" loading="lazy"></a>
+        <figcaption><b>${p.year}</b> · ${MW.esc(p.caption)}<span class="small muted" style="display:block">${MW.esc(p.credit)} · ${MW.esc(p.license)}</span></figcaption></figure>`).join("")}</div></div>`);
+
+    // Sanborn fire-insurance map sheets for this address
+    const sbHTML = MW.sanbornHTML ? MW.sanbornHTML(hit.number || (qm && qm[1]), hit.road || (qm && qm[2])) : "";
+    $("#sanborn").innerHTML = sbHTML; $("#sanborn").hidden = !sbHTML;
+
     // mini map
     const m = ensureMap(here, 16);
     if (m) {

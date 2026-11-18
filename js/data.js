@@ -68,6 +68,11 @@ MW.sources = {
   smr:       { label: "Wikipedia: South Mountain Reservation", url: "https://en.wikipedia.org/wiki/South_Mountain_Reservation" },
   newark:    { label: "Wikipedia: Old First Presbyterian Church, Newark (town meeting house)", url: "https://en.wikipedia.org/wiki/Old_First_Presbyterian_Church_(Newark,_New_Jersey)" },
   irvington: { label: "Irvington: History of Irvington (Camptown)", url: "https://irvington.net/township/history/" },
+  directories:{ label: "Oranges city directories, 1908–1950 (Maplewood Memorial Library digital archive)", url: "https://www.digifind-it.com/maplewood/views/view.php?id=1" },
+  locNews:   { label: "Library of Congress: Chronicling America historic newspapers (public domain)", url: "https://www.loc.gov/collections/chronicling-america/" },
+  sanborn1912:{ label: "Sanborn Fire Insurance Map, South Orange Village, 1912 (Library of Congress, public domain)", url: "https://www.loc.gov/item/sanborn05629_001/" },
+  sanborn1949:{ label: "Sanborn Fire Insurance Map, South Orange Village, 1912–1949 (Library of Congress, public domain)", url: "https://www.loc.gov/item/sanborn05629_002/" },
+  gottscho:  { label: "Gottscho-Schleisner Collection, Library of Congress (no known restrictions on publication)", url: "https://www.loc.gov/pictures/collection/gsc/" },
   tiger:     { label: "U.S. Census TIGER municipal boundaries (outlines for older eras are approximations)", url: "https://tigerweb.geo.census.gov/" }
 };
 

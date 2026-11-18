@@ -38,16 +38,35 @@ def pages(bbox_html):
             if t: lines.append([t, float(x0), float(y0), float(x1), float(y1)])
         yield float(pw), float(ph), lines
 
+def columns(lines):
+    """Left edges of the text columns: x positions where ditto-dash entries start (rounded, frequent)."""
+    from collections import Counter
+    c = Counter(round(x0 / 4) * 4 for t, x0, *_ in lines if re.match(rf"^{DITTO}", t))
+    return sorted(x for x, n in c.items() if n >= 4)
+
 def entries(lines):
+    """Re-join wrapped entries. A line at a column's left edge starts an entry; an indented line continues it;
+    lines outside every column (advertisements, running heads) are dropped. Falls back to the old heuristic
+    when no columns can be found on the page."""
+    cols = columns(lines)
     cur = None
     for t, x0, y0, x1, y1 in lines:
-        # a new column starts when y jumps upward a lot; also new entry when line looks like an entry start
-        new = cur is None or START.match(t) and not cur[0].endswith(("-", "­")) or y0 < cur[2] - 30 or abs(y0 - cur[4]) > 40
+        if cols:
+            edge = min(cols, key=lambda c: abs(c - x0))
+            d = x0 - edge
+            if -6 <= d <= 6: kind = "start"
+            elif 6 < d <= 45: kind = "cont"
+            else: kind = "skip"
+            if kind == "skip":
+                continue
+            new = cur is None or kind == "start" and not cur[0].endswith(("-", "\xad")) or y0 < cur[2] - 30 or abs(y0 - cur[4]) > 40
+        else:
+            new = cur is None or START.match(t) and not cur[0].endswith(("-", "\xad")) or y0 < cur[2] - 30 or abs(y0 - cur[4]) > 40
         if new:
             if cur: yield cur
             cur = [t, x0, y0, x1, y1]
         else:
-            cur[0] = (cur[0][:-1] if cur[0].endswith(("-", "­")) else cur[0] + " ") + t
+            cur[0] = (cur[0][:-1] if cur[0].endswith(("-", "\xad")) else cur[0] + " ") + t
             cur[1], cur[2], cur[3], cur[4] = min(cur[1], x0), min(cur[2], y0), max(cur[3], x1), max(cur[4], y1)
     if cur: yield cur
 
@@ -87,7 +106,12 @@ def parse_part(y, path_url):
                     surname = w[0].rstrip(",").title(); rest = w[1] if len(w) > 1 else ""
             a = ADDR.search(t)
             if not a or not surname: continue
-            raw = re.sub(r"\s+[NSEW]$", "", a.group(3).replace("pky", "pkwy"))
+            raw = a.group(3).replace("pky", "pkwy")
+            # keep directions: "Ridgewood rd S" -> "South Ridgewood rd", "S Orange av W" -> "West S Orange av"
+            DIRS = {"N": "North", "S": "South", "E": "East", "W": "West"}
+            d = re.match(r"^(.*\S)\s+([NSEW]|North|South|East|West)$", raw)
+            if d: raw = DIRS.get(d.group(2), d.group(2)) + " " + d.group(1)
+            raw = re.sub(r"\b([NSEW])\s+(?=[A-Z][a-z])", lambda m: DIRS[m.group(1)] + " ", raw)
             street = canon_street(raw, STREETS) or loose_street(raw)
             pre = rest[: max(0, len(rest) - (len(t) - a.start()))]
             spouse = re.search(r"\(([A-Za-z .]+)\)", pre)

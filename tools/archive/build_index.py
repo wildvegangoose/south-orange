@@ -71,6 +71,22 @@ if os.path.exists(sp):
         houses[c["street"]][norm_num(c["number"])]["news"].append(
             {"year": c["year"], "crop": c["crop"], "src": c["src"], "snippet": re.sub(r"\s+", " ", c["snippet"])[:400]})
 
+# newspaper mentions from the Library of Congress (news_loc.py); public domain, so kept beyond the name cutoff
+np_ = os.path.join(OUT, "data", "news_loc.json")
+if os.path.exists(np_):
+    seen = set()
+    for c in json.load(open(np_)):
+        k = (c["street"], norm_num(c["number"]), c["page"])
+        if k in seen or not c.get("region") or not c.get("alto_wh") or not c["alto_wh"][0]: continue
+        seen.add(k)
+        pw, ph = c["alto_wh"]; x, y, w, h = c["region"]
+        pad = 0.01
+        pct = [max(0, x / pw - pad), max(0, y / ph - pad), min(1, w / pw + 2 * pad), min(1, h / ph + 2 * pad)]
+        houses[c["street"]][norm_num(c["number"])]["news"].append({
+            "year": int(c["date"][:4]), "date": c["date"], "paper": c.get("paper"), "kind": c.get("kind"),
+            "snippet": c["snippet"][:500], "src": c["page"],
+            "iiif": c["iiif"] + "/pct:" + ",".join(f"{v * 100:.2f}" for v in pct) + "/500,/0/default.jpg"})
+
 # words that the parser sometimes takes for a surname (directory headings, town and street names, OCR junk)
 BAD = set(w.title() for c in CONF for w in re.sub(r"[^A-Z ]", " ", c).split() if len(w) > 2) | set(TOWN["directories"]["not_surnames"])
 

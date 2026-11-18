@@ -81,6 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
   ${v.clippings && v.clippings.length ? `<section class="section"><div class="wrap"><div class="eyebrow">From the library's scrapbooks</div><h2 class="reveal">In the news</h2>
     <div class="news-grid">${v.clippings.map(c => `<a class="clip reveal" href="${c.src}" target="_blank" rel="noopener"><span class="doc-year">${c.year}</span><img src="${c.img}" alt="Clipping ${c.year}" loading="lazy"><span class="doc-cap">${esc(c.caption || "Scrapbook, " + c.year)}</span></a>`).join("")}</div></div></section>` : ""}
 
+  ${(() => { const m = v.address.match(/^(\d+)\S*\s+([A-Za-z. ]+?)(?:\s*[(,]|$)/); const h = m && MW.sanbornHTML ? MW.sanbornHTML(m[1], m[2], { title: `${esc(v.name)} on the Sanborn maps` }) : ""; return h ? `<section class="section sanborn"><div class="wrap">${h}</div></section>` : ""; })()}
+
   <section class="section lm-sources"><div class="wrap">
     <h2>Sources</h2><ul>${v.sources.map(s => `<li>${link(s)}</li>`).join("")}</ul>
     <p class="small muted">The narrative is our synthesis of the sources listed. Where sources disagree, the text says so.</p>

@@ -241,3 +241,11 @@ input:focus, select:focus { border-color: var(--maple); box-shadow: 0 0 0 4px rg
 @keyframes nudge { 50% { transform: translateX(6px); } }
 
 .lm-link { margin-top: .6rem !important; font-weight: 700; }
+
+/* Sanborn fire-insurance map sheets (house + landmark pages) */
+.sanborn { margin-top: 3rem; }
+.sb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin: 1rem 0; }
+.sb-card { margin: 0; background: #fffdf7; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.sb-card img { display: block; width: 100%; height: 300px; object-fit: cover; object-position: center; background: #e9e1cf; }
+.sb-card figcaption { padding: .6rem .8rem; font-size: .85rem; line-height: 1.5; }
+.sb-card figcaption a { display: block; margin-top: .2rem; }
