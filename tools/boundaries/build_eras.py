@@ -54,7 +54,8 @@ def rnd(o):
     if isinstance(o, (list, tuple)): return [rnd(x) for x in o]
     return round(o, 5) if isinstance(o, float) else o
 
-out = [{"id": i, "from": a, "to": b, "name": n, "note": note, "geometry": rnd(gj(g))} for i, a, b, n, g, note in ERAS]
+INNER = {"village1869"}  # drawn as lines inside the era's township, not as its outline
+out = [dict({"id": i, "from": a, "to": b, "name": n, "note": note, "geometry": rnd(gj(g))}, **({"inner": True} if i in INNER else {})) for i, a, b, n, g, note in ERAS]
 with open(os.path.join(ROOT, "data", "boundaries.js"), "w") as f:
     f.write("// Approximate historic jurisdiction outlines, built by tools/boundaries/build_eras.py from U.S. Census TIGER\n"
             "// municipal boundaries (public domain). Historic lines are unions of today's towns, not surveyed lines.\n"

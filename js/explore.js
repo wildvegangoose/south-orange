@@ -26,14 +26,14 @@ document.addEventListener("DOMContentLoaded", () => {
   if (today) map.fitBounds(today.getBounds(), { padding: [20, 20] });
   map.createPane("jur").style.zIndex = 380;
   map.getPane("jur").style.pointerEvents = "none";
-  const jurStyle = j => j.id === "village" ? { color: "#b8381e", weight: 3, dashArray: "8 6" }
-    : j.id === "village1869" ? { color: "#b8381e", weight: 3, dashArray: "2 6" }
+  const jurStyle = j => j.to >= 2026 && !j.inner ? { color: "#b8381e", weight: 3, dashArray: "8 6" }
+    : j.inner ? { color: MW.town.innerColor || "#b8381e", weight: 2.5, dashArray: "2 6" }
     : { color: "#4f3b4a", weight: 3.5, dashArray: "10 7" };
   const jurLayers = {};
   const jurLayer = j => jurLayers[j.id] || (jurLayers[j.id] = (() => {
     const g = L.layerGroup();
     const r = rings(j.geometry);
-    L.polygon([[[41.2, -75], [41.2, -73.4], [40.3, -73.4], [40.3, -75]], ...r], { pane: "jur", stroke: false, fillColor: "#f6efdf", fillOpacity: j.id.startsWith("village") ? .45 : .3, interactive: false }).addTo(g);
+    L.polygon([[[41.2, -75], [41.2, -73.4], [40.3, -73.4], [40.3, -75]], ...r], { pane: "jur", stroke: false, fillColor: "#f6efdf", fillOpacity: j.to >= 2026 ? .45 : .3, interactive: false }).addTo(g);
     const poly = L.polygon(r, Object.assign({ pane: "jur", fill: false, interactive: false, className: "jur-line" }, jurStyle(j))).addTo(g);
     g._poly = poly;
     return g;
@@ -62,12 +62,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const n = MW.nameFor(y), seats = MW.seatsFor(y);
     $("#townName").textContent = n.name;
     $("#townSub").textContent = n.sub;
-    if (y < 1666) { $("#jurBox").innerHTML = `<div class="jb-k">Who governed here</div><p>No colonial government yet. This was Lenapehoking, the Lenape homeland. The faint dotted line shows today's Village for reference.</p>`; return; }
+    if (y < 1666) { $("#jurBox").innerHTML = `<div class="jb-k">Who governed here</div><p>No colonial government yet. This was Lenapehoking, the Lenape homeland. The faint dotted line shows ${MW.esc(MW.town.todayLabel || "today's town")} for reference.</p>`; return; }
     const outer = js[0];
     $("#jurBox").innerHTML = `<div class="jb-k">Who governed here in ${y}</div>
       ${js.map(j => `<h3>${MW.esc(j.name)}</h3><p class="small muted">${MW.esc(j.note)}</p>`).join("")}
       ${seats.map(s => `<p class="jb-seat small"><b>★ ${MW.esc(s.title)}</b>: ${MW.esc(s.place)}.${s.lat ? ` <button data-seat="${s.id}">Show on map</button>` : ""}</p>`).join("")}
-      <div class="jb-actions">${outer && outer.id !== "village" ? `<button data-fit="${outer.id}">See all of ${MW.esc(outer.name)}</button>` : ""}<button data-fit="today">Back to today's Village</button></div>
+      <div class="jb-actions">${outer && outer.to < 2026 ? `<button data-fit="${outer.id}">See all of ${MW.esc(outer.name)}</button>` : ""}<button data-fit="today">Back to ${MW.esc(MW.town.todayLabel || "today's town")}</button></div>
       <p class="small muted">Older outlines are approximate: they are drawn from today's town lines. <span class="sources">${MW.sourceLinks(["tiger"])}</span></p>`;
   }
   $("#jurBox").addEventListener("click", e => {
