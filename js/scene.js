@@ -1,9 +1,10 @@
 /* ==========================================================================
-   The Time Machine scene: an illustrated SVG panorama of Maplewood that
+   The Time Machine scene: an illustrated SVG panorama of South Orange that
    rebuilds itself for any year. Composite and impressionistic: buildings are
    placed for storytelling, not surveyed positions.
-   West (South Mountain & Ridgewood Road farms) is on the left; the Village
-   center, Memorial Park, and the Valley Street / Hilton side run to the right.
+   West (the mountain, Ridgewood Road farms and the Mountain House) is on the left;
+   the Village center, Village Hall and the station are in the middle; Montrose
+   and Seton Hall run to the right.
    ========================================================================== */
 (function () {
   const MW = window.MW;
@@ -59,14 +60,14 @@
       <text x="0" y="-59" text-anchor="middle" font-size="9" font-family="Fraunces,serif" font-weight="700" fill="#3b2f26">${name}</text>
       <path d="M-50 -38 h100" stroke="#3b2f26"/><path d="M-50 -38 l8 -8 h84 l8 8" fill="#b8381e" opacity=".85"/>
       ${win(-40, -32, 22, 22, "#e8eef0")}${win(18, -32, 22, 22, "#e8eef0")}${door(-8, -28, 16, 28)}<path d="M-50 0 h100 v4 h-100z" fill="#8b7a62"/>`,
-    depot: () => `<rect x="-46" y="-36" width="92" height="36" fill="#c9a36b" stroke="#3b2f26" stroke-width="2"/>${Array.from({ length: 11 }, (_, i) => `<path d="M${-42 + i * 8.4} -36v36" stroke="rgba(0,0,0,.15)"/>`).join("")}
+    depot: (name = "SOUTH ORANGE") => `<rect x="-46" y="-36" width="92" height="36" fill="#c9a36b" stroke="#3b2f26" stroke-width="2"/>${Array.from({ length: 11 }, (_, i) => `<path d="M${-42 + i * 8.4} -36v36" stroke="rgba(0,0,0,.15)"/>`).join("")}
       <path d="M-62 -34 L-40 -58 H40 L62 -34Z" fill="#7a3b26" stroke="#2f241b" stroke-width="2"/>${win(-34, -28, 12, 18)}${win(22, -28, 12, 18)}${door(-8, -28, 16, 28)}
-      <rect x="-26" y="-50" width="52" height="11" fill="#f1e3c4" stroke="#3b2f26"/><text x="0" y="-41.5" text-anchor="middle" font-size="8" font-family="Fraunces,serif" font-weight="700" fill="#3b2f26">MAPLEWOOD</text>`,
-    station: () => `<rect x="-78" y="-46" width="156" height="46" fill="#a9573a" stroke="#3b2018" stroke-width="2"/>
+      <rect x="-26" y="-50" width="52" height="11" fill="#f1e3c4" stroke="#3b2f26"/><text x="0" y="-41.5" text-anchor="middle" font-size="8" font-family="Fraunces,serif" font-weight="700" fill="#3b2f26">${name}</text>`,
+    station: (name = "SOUTH ORANGE") => `<rect x="-78" y="-46" width="156" height="46" fill="#a9573a" stroke="#3b2018" stroke-width="2"/>
       ${Array.from({ length: 5 }, (_, i) => `<path d="M-78 ${-38 + i * 8}h156" stroke="rgba(0,0,0,.12)"/>`).join("")}
       <path d="M-96 -44 L-70 -72 H70 L96 -44Z" fill="#3e4a44" stroke="#1e2420" stroke-width="2"/><path d="M-96 -44 H96" stroke="#1e2420" stroke-width="3"/>
       ${[-62, -36, 24, 50].map(x => `<path d="M${x} -36 a7 7 0 0 1 14 0 v26 h-14z" fill="#f3e3b2" stroke="#3b2018" stroke-width="1.5"/>`).join("")}${door(-9, -34, 18, 34, "#4a2a1a")}
-      <rect x="-34" y="-66" width="68" height="13" rx="2" fill="#f4eee0" stroke="#3b2018"/><text x="0" y="-56" text-anchor="middle" font-size="9" font-family="Fraunces,serif" font-weight="700" fill="#3b2018">MAPLEWOOD</text>`,
+      <rect x="-34" y="-66" width="68" height="13" rx="2" fill="#f4eee0" stroke="#3b2018"/><text x="0" y="-56" text-anchor="middle" font-size="9" font-family="Fraunces,serif" font-weight="700" fill="#3b2018">${name}</text>`,
     queenAnne: (c = "#7d9a8a", trim = "#f4ead2") => `<rect x="-46" y="-78" width="92" height="78" fill="${c}" stroke="#2f241b" stroke-width="2"/>
       <rect x="20" y="-104" width="34" height="104" fill="${c}" stroke="#2f241b" stroke-width="2"/><path d="M16 -104 L37 -142 L58 -104Z" fill="#6c3a2a" stroke="#2f241b" stroke-width="2"/>
       <path d="M-54 -76 L-8 -118 L36 -76Z" fill="#6c3a2a" stroke="#2f241b" stroke-width="2"/>
@@ -94,11 +95,29 @@
     shops: () => `${[["#c6a27a", "BAKERY", -110], ["#9aa98f", "DRUGS", -36], ["#d3b6a0", "HARDWARE", 38]].map(([c, n, x]) => `<g transform="translate(${x},0)"><rect x="0" y="-70" width="72" height="70" fill="${c}" stroke="#2f241b" stroke-width="2"/><rect x="-2" y="-76" width="76" height="8" fill="#5a4a3c"/>
       <path d="M0 -40 l6 -8 h60 l6 8" fill="${["#b8381e", "#1f3a2e", "#e3a33a"][(x + 110) / 74]}"/><text x="36" y="-54" text-anchor="middle" font-size="8.5" font-family="Fraunces,serif" font-weight="700" fill="#2f241b">${n}</text>
       ${win(6, -34, 26, 24, "#e5eef0")}${door(44, -30, 16, 30)}${win(10, -66, 12, 12)}${win(48, -66, 12, 12)}</g>`).join("")}`,
-    theater: () => `<rect x="-62" y="-112" width="124" height="112" fill="#d9b98a" stroke="#2f241b" stroke-width="2"/><rect x="-62" y="-118" width="124" height="10" fill="#8a5a3a"/>
-      <rect x="-14" y="-170" width="28" height="70" fill="#b8381e" stroke="#2f241b" stroke-width="2"/>${"MAPLEWOOD".split("").map((ch, i) => `<text x="0" y="${-160 + i * 7.4}" text-anchor="middle" font-size="7" font-weight="800" fill="#ffe8a8" font-family="Inter,sans-serif">${ch}</text>`).join("")}
+    theater: (name = "SOPAC") => `<rect x="-62" y="-112" width="124" height="112" fill="#d9b98a" stroke="#2f241b" stroke-width="2"/><rect x="-62" y="-118" width="124" height="10" fill="#8a5a3a"/>
+      <rect x="-14" y="-170" width="28" height="70" fill="#b8381e" stroke="#2f241b" stroke-width="2"/>${name.split("").map((ch, i) => `<text x="0" y="${-160 + i * 7.4}" text-anchor="middle" font-size="7" font-weight="800" fill="#ffe8a8" font-family="Inter,sans-serif">${ch}</text>`).join("")}
       <path d="M-58 -62 h116 l-8 16 h-100z" fill="#1f3a2e" stroke="#2f241b" stroke-width="1.5"/><g class="bulbs">${Array.from({ length: 15 }, (_, i) => `<circle cx="${-52 + i * 7.4}" cy="-64" r="2" fill="#ffd86b" style="animation-delay:${(i % 3) * .3}s"/>`).join("")}</g>
       <text x="0" y="-50" text-anchor="middle" font-size="8" font-weight="700" fill="#ffe8a8" font-family="Inter,sans-serif" class="marquee-txt">NOW SHOWING</text>
       ${[-42, 22].map(x => win(x, -98, 20, 26, "#f4ead2")).join("")}${[-36, -12, 12].map(x => `<rect x="${x}" y="-38" width="22" height="38" fill="#6b3d26" stroke="#2a1e16" stroke-width="1.5"/>`).join("")}`,
+    /* Village Hall (1895): Tudor Revival, half-timbered gables over brick, with clock and cupola */
+    villageHall: () => `<rect x="-96" y="-70" width="192" height="70" fill="#a8583c" stroke="#2f241b" stroke-width="2"/>${Array.from({ length: 8 }, (_, i) => `<path d="M-96 ${-62 + i * 8}h192" stroke="rgba(0,0,0,.1)"/>`).join("")}
+      ${[-70, 70].map(x => `<g transform="translate(${x},0)"><rect x="-26" y="-118" width="52" height="48" fill="#efe4c8" stroke="#2f241b" stroke-width="2"/><path d="M-26 -94h52M-13 -118v48M13 -118v48M-26 -118 L0 -94 L26 -118" stroke="#4a3022" stroke-width="3" fill="none"/><path d="M-32 -116 L0 -150 L32 -116Z" fill="#4c3a32" stroke="#2f241b" stroke-width="2"/></g>`).join("")}
+      <path d="M-44 -70 H44 L36 -98 H-36Z" fill="#4c3a32" stroke="#2f241b" stroke-width="2"/>
+      <rect x="-15" y="-150" width="30" height="54" fill="#efe4c8" stroke="#2f241b" stroke-width="2"/><circle cx="0" cy="-128" r="10" fill="#f8f2e2" stroke="#2f241b" stroke-width="1.5"/><path d="M0 -128 v-7 M0 -128 h5" stroke="#2f241b" stroke-width="1.5"/>
+      <g class="cupola"><rect x="-10" y="-170" width="20" height="20" fill="#f4eee0" stroke="#2f241b" stroke-width="1.5"/><path d="M-14 -168 L0 -186 L14 -168Z" fill="#4c3a32" stroke="#2f241b" stroke-width="1.5"/></g>
+      ${[-36, -12, 12].map(x => `<path d="M${x} 0 v-28 a12 12 0 0 1 24 0 v28" fill="#3b2a20" stroke="#2f241b" stroke-width="1.5"/>`).join("")}
+      ${[-88, -60, 52, 76].map(x => win(x, -56, 14, 20, "#f4ead2")).join("")}`,
+    /* Gas street lamp, the Village's symbol */
+    gaslamp: () => `<path d="M0 0 v-58" stroke="#1f2a26" stroke-width="4"/><path d="M-6 0 h12" stroke="#1f2a26" stroke-width="4"/><path d="M-5 -58 h10 l4 -16 h-18z" fill="#fff2b8" stroke="#1f2a26" stroke-width="2" class="glow"/><path d="M-11 -74 h22 l-11 -8z" fill="#1f2a26"/>`,
+    /* Mountain House water-cure hotel: long, porched, three storeys */
+    hotel: () => `<rect x="-120" y="-84" width="240" height="84" fill="#efe6d2" stroke="#3b2f26" stroke-width="2"/><path d="M-128 -82 L-108 -108 H108 L128 -82Z" fill="#5d4636" stroke="#2f241b" stroke-width="2"/>
+      ${Array.from({ length: 3 }, (_, r) => Array.from({ length: 9 }, (_, i) => win(-108 + i * 26, -76 + r * 24, 12, 16, "#f6e3a8")).join("")).join("")}
+      <path d="M-120 -28 h240" stroke="#3b2f26" stroke-width="2"/>${Array.from({ length: 13 }, (_, i) => `<path d="M${-118 + i * 19.6} -28 v28" stroke="#f8f2e2" stroke-width="3"/>`).join("")}${chimney(-70, -104, 16)}${chimney(60, -104, 16)}`,
+    /* 1926 Norman-style firehouse with a hose tower */
+    firehouse: () => `<rect x="-60" y="-60" width="120" height="60" fill="#b9a487" stroke="#3b2f26" stroke-width="2"/>${Array.from({ length: 20 }, (_, i) => `<rect x="${-56 + (i % 5) * 23 + (Math.floor(i / 5) % 2) * 9}" y="${-56 + Math.floor(i / 5) * 13}" width="17" height="9" rx="2" fill="#a89276" opacity=".7"/>`).join("")}
+      <path d="M-66 -58 L0 -90 L66 -58Z" fill="#6a4a3a" stroke="#2f241b" stroke-width="2"/><rect x="34" y="-128" width="26" height="70" fill="#b9a487" stroke="#3b2f26" stroke-width="2"/><path d="M30 -126 L47 -150 L64 -126Z" fill="#6a4a3a" stroke="#2f241b" stroke-width="2"/>
+      ${[-46, -10].map(x => `<path d="M${x} 0 v-36 a14 14 0 0 1 28 0 v36z" fill="#9e2f18" stroke="#2f241b" stroke-width="1.5"/>`).join("")}${win(40, -108, 12, 16)}`,
     townhall: () => `<rect x="-110" y="-74" width="220" height="74" fill="#a64b33" stroke="#2f241b" stroke-width="2"/>${Array.from({ length: 8 }, (_, i) => `<path d="M-110 ${-66 + i * 8}h220" stroke="rgba(0,0,0,.1)"/>`).join("")}
       <path d="M-118 -72 H118 L104 -86 H-104Z" fill="#efe8d8" stroke="#2f241b" stroke-width="2"/><path d="M-40 -86 L0 -112 L40 -86Z" fill="#efe8d8" stroke="#2f241b" stroke-width="2"/>
       <rect x="-14" y="-140" width="28" height="30" fill="#f4eee0" stroke="#2f241b" stroke-width="2"/><rect x="-9" y="-154" width="18" height="14" fill="#f4eee0" stroke="#2f241b" stroke-width="2"/><path d="M-11 -154 L0 -178 L11 -154Z" fill="#3e4a44" stroke="#2f241b" stroke-width="2"/><circle cx="0" cy="-126" r="7" fill="#fff" stroke="#2f241b"/>
@@ -144,7 +163,7 @@
       <g class="bob"><circle cx="2" cy="-54" r="5" fill="#d8b48a"/><path d="M0 -48 L-4 -32 L4 -18 M-2 -44 L12 -34" stroke="#1f3a2e" stroke-width="4" stroke-linecap="round" fill="none"/></g>`,
     trolley: () => `<path d="M10 -86 L-30 -120" stroke="#2a221c" stroke-width="2"/><rect x="-70" y="-80" width="150" height="66" rx="10" fill="#c99b2e" stroke="#3b2618" stroke-width="2"/><rect x="-70" y="-30" width="150" height="10" fill="#7c2c1a"/>
       ${Array.from({ length: 7 }, (_, i) => `<rect x="${-62 + i * 20}" y="-72" width="14" height="22" rx="2" fill="#f4ead2" stroke="#3b2618"/>`).join("")}<rect x="-74" y="-86" width="158" height="8" rx="4" fill="#5b3a24"/>
-      <circle cx="-40" cy="-10" r="9" fill="#2a221c"/><circle cx="50" cy="-10" r="9" fill="#2a221c"/><text x="5" y="-38" text-anchor="middle" font-size="7" fill="#f4ead2" font-weight="800">SPRINGFIELD AVE</text>`,
+      <circle cx="-40" cy="-10" r="9" fill="#2a221c"/><circle cx="50" cy="-10" r="9" fill="#2a221c"/><text x="5" y="-38" text-anchor="middle" font-size="7" fill="#f4ead2" font-weight="800">SOUTH ORANGE AVE</text>`,
     modelT: () => `<path d="M-40 -20 v-14 h18 v-22 h34 v22 h24 l6 14z" fill="#1d1b19"/><rect x="-18" y="-52" width="24" height="16" fill="#cfe0e6"/><circle cx="-26" cy="-10" r="11" fill="#2a221c" stroke="#777" stroke-width="2"/><circle cx="30" cy="-10" r="11" fill="#2a221c" stroke="#777" stroke-width="2"/><circle cx="40" cy="-28" r="3" fill="#ffe08a"/>`,
     fifties: () => `<path d="M-60 -16 q0 -14 14 -16 l20 -18 h46 l22 18 h20 q14 2 14 16 z" fill="#4fa0a0" stroke="#1f3a3a" stroke-width="2"/><path d="M-22 -32 l12 -14 h36 l14 14z" fill="#dff1f3" stroke="#1f3a3a"/><path d="M-60 -16 h136" stroke="#f4f4f4" stroke-width="3"/><circle cx="-34" cy="-10" r="10" fill="#222"/><circle cx="46" cy="-10" r="10" fill="#222"/><circle cx="-34" cy="-10" r="4" fill="#ddd"/><circle cx="46" cy="-10" r="4" fill="#ddd"/>`,
     modern: () => `<path d="M-56 -14 q0 -16 16 -18 l18 -16 h44 l22 16 h12 q14 2 14 18 z" fill="#b8381e" stroke="#5a1a0c" stroke-width="2"/><path d="M-18 -32 l10 -12 h28 l16 12z" fill="#cfe4ea" stroke="#5a1a0c"/><circle cx="-30" cy="-10" r="10" fill="#222"/><circle cx="40" cy="-10" r="10" fill="#222"/><circle cx="-30" cy="-10" r="4" fill="#bbb"/><circle cx="40" cy="-10" r="4" fill="#bbb"/><rect x="62" y="-24" width="6" height="4" fill="#fff3b0"/>`,
@@ -182,49 +201,49 @@
     const streetMaples = [40, 200, 330, 560, 680, 1000, 1210, 1340, 1470, 1580].map((x, i) =>
       item(x, GROUND + 6, 1880 + (i % 4) * 6, 9999, tree.maple(1, ["#c8461f", "#d9622b", "#e3a33a", "#b8381e"][i % 4]), { grow: 1880 + (i % 4) * 6, cls: "streettree" })).join("");
 
-    const orchard = [1040, 1080, 1120, 1160, 1200].map((x, i) => item(x, BACK + 52 + (i % 2) * 6, 1750, 1905, tree.apple(.9 + (i % 2) * .15))).join("");
-    const parkTrees = [1010, 1060, 1180, 1240].map((x, i) => item(x, BACK + 44 + (i % 2) * 8, 1923, 9999, tree.oak(1.15, ["#4c7a42", "#d9622b", "#3f6b3f", "#e3a33a"][i]), { grow: 1923 })).join("");
+    const orchard = [1040, 1080, 1120, 1160, 1200].map((x, i) => item(x, BACK + 52 + (i % 2) * 6, 1750, 1866, tree.apple(.9 + (i % 2) * .15))).join("");
+    const parkTrees = [470, 520, 600, 640].map((x, i) => item(x, BACK + 44 + (i % 2) * 8, 1889, 9999, tree.oak(1.15, ["#4c7a42", "#d9622b", "#3f6b3f", "#e3a33a"][i]), { grow: 1889 })).join("");
+    const pond = item(560, BACK + 60, 1889, 9999, `<ellipse cx="0" cy="0" rx="70" ry="12" fill="#7fb2c8" stroke="#4f7f92" stroke-width="2"/><path d="M-30 -2 q6 -4 12 0 M14 2 q6 -4 12 0" stroke="#fff" stroke-width="1.5" fill="none" opacity=".7"/>`, { place: "meadowland", name: "Meadowland Park & the Duck Pond", by: -26, lbl: "Duck Pond, 1889" });
+    const lamps = [610, 760, 905, 1050, 1200].map(x => item(x, GROUND + 14, 1860, 9999, B.gaslamp(), { cls: "gaslamp" })).join("");
 
     const back = [
-      item(800, BACK, 1860, 1901, B.depot(), { place: "station1860", name: "First Maplewood Station, 1860", by: -70, lbl: "Maplewood Station, 1860" }),
-      item(800, BACK - 18, 1902, 9999, B.station(), { place: "station1902", name: "Maplewood Station", by: -84, lbl: "Maplewood Station" }),
-      item(1120, BACK - 6, 1931, 9999, B.townhall(), { place: "townhall", name: "Municipal Building", by: -186, lbl: "Town Hall" }),
-      item(1430, BACK - 22, 1927, 9999, B.highschool(), { place: "chs", name: "Columbia High School", by: -196, lbl: "Columbia High School" }),
+      item(260, BACK - 30, 1847, 1890, B.hotel(), { place: "mountainhouse", name: "Mountain House water cure", by: -126, lbl: "Mountain House" }),
+      item(800, BACK, 1837, 1915, B.depot(), { place: "railroad", name: "South Orange depot", by: -70, lbl: "Railroad depot, 1837" }),
+      item(800, BACK - 18, 1916, 9999, B.station(), { place: "station1916", name: "South Orange station, 1916", by: -84, lbl: "South Orange Station 1916" }),
+      item(1400, BACK - 22, 1860, 9999, B.highschool(), { place: "setonhall", name: "Seton Hall", by: -196, lbl: "Seton Hall" }),
+      item(1180, BACK - 6, 1863, 9999, B.chapel(), { place: "chapel", name: "Chapel of the Immaculate Conception", by: -144, lbl: "Seton Hall chapel", s: 1.15 })
     ].join("");
-    const mill = item(1330, BACK + 30, 1831, 1899, B.mill(), { place: "pierson", name: "Pierson's Mill", by: -124, lbl: "Pierson's Mill" });
+    const mill = item(1330, BACK + 30, 1700, 1836, B.mill(), { name: "Sawmill" });
 
     const front = [
       // Lenape homeland
-      item(170, GROUND - 4, 1500, 1690, B.wetu(), { place: "trails", name: "Lenape trail", by: -64, lbl: "Lenape wetu" }),
+      item(170, GROUND - 4, 1500, 1690, B.wetu(), { place: "trail", name: "Lenape trail", by: -64, lbl: "Lenape wetu" }),
       item(250, GROUND - 2, 1500, 1690, B.fire()),
       item(330, GROUND - 6, 1500, 1690, B.wetu()),
-      // Ridgewood Road farms
-      item(370, GROUND, 1680, 1765, B.cabin(), { name: "Settler's cabin" }),
-      item(130, GROUND, 1743, 9999, B.stoneHouse(), { place: "tball", name: "Timothy Ball House, 1743", by: -116, lbl: "Timothy Ball House 1743" }),
-      item(130, GROUND, 1919, 1952, B.innAdds()),
-      item(285, GROUND, 1745, 1904, B.barn()),
-      item(285, GROUND, 1905, 9999, B.foursquare("#d4b483"), { place: "balch", name: "Balch foursquare", by: -136, lbl: "Foursquare (Balch era)" }),
-      item(400, GROUND, 1885, 1929, B.queenAnne("#7d9a8a"), { name: "Queen Anne house" }),
-      item(400, GROUND, 1930, 9999, B.queenAnne("#9a7d8a")),
-      item(520, GROUND, 1790, 9999, B.farmhouse("#ece4d2", 100), { place: "durand", name: "Durand-Hedden House", by: -112, lbl: "Durand-Hedden House" }),
-      item(572, GROUND, 1850, 9999, B.wing()),
+      // Ridgewood Road farms (west)
+      item(370, GROUND, 1677, 1765, B.cabin(), { place: "brown", name: "Brown brothers' farm", by: -84, lbl: "Brown farm, 1677" }),
+      item(130, GROUND, 1774, 9999, B.stoneHouse(), { place: "squier", name: "Squier House, 1774", by: -116, lbl: "Squier House 1774" }),
+      item(285, GROUND, 1745, 1849, B.barn()),
+      item(285, GROUND, 1850, 9999, B.farmhouse("#9c7a62", 120, "#4a3a30"), { place: "hillside", name: "Redmond's \"Hillside\", 1850", by: -104, lbl: "\"Hillside\" 1850" }),
+      item(400, GROUND, 1910, 1929, B.colonialRev(), { name: "North Ridgewood Road estate" }),
+      item(400, GROUND, 1930, 9999, B.tudor(), { name: "1920s Tudor (Wyoming)" }),
       // Village center
-      item(680, GROUND, 1811, 1889, B.chapel(), { place: "babel", name: "Babel Chapel", by: -150, lbl: "Babel Chapel" }),
-      item(672, GROUND, 1890, 1915, B.queenAnne("#b08a5a")),
-      item(690, GROUND, 1916, 9999, B.tudor(), { place: "dalzell", name: "Dalzell-era Tudor", by: -130, lbl: "Tudor Revival (Dalzell era)" }),
-      item(830, GROUND, 1841, 1883, B.store("CLINTON VALLEY STORE"), { place: "store", name: "Clinton Valley Store", by: -90, lbl: "Clinton Valley Store" }),
-      item(830, GROUND, 1884, 1925, B.store("BAKER'S STORE · P.O.", "#e2d1ac"), { place: "store", name: "Baker's Store", by: -90, lbl: "Baker's Store & Post Office" }),
-      item(840, GROUND, 1926, 1957, B.shops(), { place: "po1910", name: "Maplewood Avenue shops", by: -96, lbl: "Maplewood Avenue" }),
-      item(840, GROUND, 1958, 9999, B.postOffice(), { place: "po1947", name: "Post Office, 1958", by: -76, lbl: "Post Office 1958" }),
-      item(960, GROUND, 1927, 9999, B.theater(), { place: "theater", name: "Maplewood Theatre", by: -186, lbl: "Maplewood Theatre" }),
-      item(1085, GROUND + 4, 1923, 9999, B.boulder(), { place: "mpark", name: "Memorial Park", by: -92, lbl: "Memorial Park" }),
-      // East: Valley Street & Hilton
-      item(1490, GROUND, 1750, 9999, B.cooper(), { place: "jball", name: "Jonas Ball House, 1750", by: -90, lbl: "Jonas Ball House 1750" }),
-      item(1330, GROUND + 2, 1855, 1889, B.strawberries(), { place: "boyden", name: "Seth Boyden's strawberries", by: -50, lbl: "Hilton strawberries" }),
-      item(1330, GROUND, 1925, 1945, B.tudor("#e6d8c0")),
-      item(1330, GROUND, 1946, 9999, B.cape(), { name: "Postwar Cape Cod" }),
-      item(1590, GROUND, 1868, 1919, B.farmhouse("#d9c4a0", 90, "#4d3a2e")),
-      item(1590, GROUND, 1920, 9999, B.colonialRev(), { name: "Colonial Revival" })
+      item(520, GROUND, 1773, 9999, B.stoneHouse(), { place: "stonehouse", name: "Old Stone House", by: -116, lbl: "Old Stone House", s: .8 }),
+      item(680, GROUND, 1787, 1814, B.cabin(), { place: "common", name: "Stone school on the common", by: -84, lbl: "Stone school 1787" }),
+      item(680, GROUND, 1815, 1879, B.farmhouse("#f0e8d6", 96, "#5d4636"), { place: "columbian", name: "Columbian School, 1815", by: -104, lbl: "Columbian School 1815" }),
+      item(680, GROUND, 1880, 9999, B.chapel(), { place: "firstpres", name: "First Presbyterian Church", by: -144, lbl: "First Presbyterian 1880" }),
+      item(835, GROUND, 1841, 1894, B.store("FREEMAN'S STORE · P.O."), { place: "post1841", name: "Freeman's store & post office", by: -90, lbl: "First post office 1841" }),
+      item(835, GROUND, 1895, 1919, B.store("SOUTH ORANGE AVE.", "#e2d1ac")),
+      item(840, GROUND, 1920, 2005, B.shops(), { name: "South Orange Avenue shops" }),
+      item(840, GROUND, 2006, 9999, B.theater(), { place: "sopac", name: "SOPAC", by: -186, lbl: "SOPAC 2006" }),
+      item(990, GROUND, 1895, 9999, B.villageHall(), { place: "villagehall", name: "Village Hall, 1895", by: -200, lbl: "Village Hall 1895", s: .9 }),
+      item(1115, GROUND, 1926, 9999, B.firehouse(), { place: "firehq", name: "Fire Headquarters", by: -160, lbl: "Firehouse 1926", s: .85 }),
+      // East: Montrose
+      item(1240, GROUND, 1868, 9999, B.queenAnne("#8f8a72"), { place: "montrose", name: "Vose's Montrose", by: -150, lbl: "Montrose (Vose) 1867" }),
+      item(1360, GROUND, 1891, 9999, B.queenAnne("#7d9a8a"), { place: "montrosepark", name: "Montrose Park", by: -150, lbl: "Montrose Park 1891" }),
+      item(1480, GROUND, 1806, 9999, B.farmhouse("#f2eee4", 104, "#3f3a36"), { place: "baldwin", name: "House with the White Chimneys", by: -104, lbl: "White Chimneys" }),
+      item(1590, GROUND, 1911, 1949, B.colonialRev(), { place: "tuxedo", name: "Tuxedo Park", by: -110, lbl: "Tuxedo Park 1911" }),
+      item(1590, GROUND, 1950, 9999, B.cape(), { name: "Postwar house" })
     ].join("");
 
     const people = [
@@ -232,7 +251,7 @@
       [1500, 1665, V.walker(), 34, 0, 1, 0], [1500, 1665, V.walker("#8a5a32"), 34, -5, 1, 0],
       [1666, 1840, V.oxcart(), 40, -10, 1, 0], [1700, 1900, V.walker("#4a3a2a"), 30, -18, -1, 1],
       [1806, 1865, V.stagecoach(), 16, -4, -1, 1], [1840, 1920, V.buggy(), 20, -8, 1, 0],
-      [1890, 9999, V.bicycle(), 22, -14, -1, 1], [1908, 1930, V.trolley(), 24, -2, 1, 0],
+      [1890, 9999, V.bicycle(), 22, -14, -1, 1], [1865, 1892, V.stagecoach(), 22, -2, 1, 0], [1893, 1930, V.trolley(), 24, -2, 1, 0],
       [1912, 1940, V.modelT(), 12, -6, -1, 1], [1946, 1979, V.fifties(), 11, -3, 1, 0],
       [1975, 9999, V.modern(), 10, -7, -1, 1], [1975, 9999, V.jogger(), 30, -12, 1, 0],
       [1990, 9999, V.stroller(), 40, -20, -1, 1], [1946, 1979, V.walker("#2f4f5a"), 36, -25, -1, 1]
@@ -240,14 +259,10 @@
       `<g class="it veh" data-from="${f}" data-to="${t}"><g class="grow"><g class="mover ${dir < 0 ? "rev" : ""}" style="animation-duration:${dur}s;animation-delay:${del}s"><g transform="translate(0,${GROUND + 34 + lane * 22})${dir < 0 ? " scale(-1,1)" : ""}">${svg}</g></g></g></g>`).join("");
 
     const trains = [
-      [1838, 1930, T.steam(), 13], [1931, 1983, T.electric(), 11], [1984, 9999, T.njt(), 10]
+      [1837, 1929, T.steam(), 13], [1930, 1983, T.electric(), 11], [1984, 9999, T.njt(), 10]
     ].map(([f, t, svg, dur]) => `<g class="it veh" data-from="${f}" data-to="${t}"><g class="grow"><g class="mover train" style="animation-duration:${dur}s"><g transform="translate(0,${BACK - 16})">${svg}</g></g></g></g>`).join("");
 
-    const frisbee = `<g class="it" data-from="1968" data-to="9999" data-place="frisbee" tabindex="0" role="button" aria-label="Ultimate Frisbee"><g class="grow">
-      <g transform="translate(1150,${GROUND + 76})">${V.jogger()}</g><g transform="translate(1290,${GROUND + 76}) scale(-1,1)">${V.jogger()}</g>
-      <ellipse class="disc" cx="1160" cy="${GROUND + 30}" rx="9" ry="3" fill="#fff" stroke="#b8381e" stroke-width="2"/>${label("Ultimate Frisbee, 1968", GROUND + 6).replace('translate(0,', 'translate(1220,')}</g></g>`;
-
-    return `<svg class="mw-scene" viewBox="0 175 ${W} ${H - 175}" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Illustrated panorama of Maplewood">
+    return `<svg class="mw-scene" viewBox="0 175 ${W} ${H - 175}" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Illustrated panorama of South Orange">
       <defs>
         <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1"><stop id="sk0" offset="0"/><stop id="sk1" offset=".65"/><stop id="sk2" offset="1"/></linearGradient>
         <radialGradient id="sunG"><stop offset="0" stop-color="#fff6d8"/><stop offset=".35" stop-color="#ffe2a0" stop-opacity=".9"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient>
@@ -266,28 +281,27 @@
       <path d="M0 440 Q200 400 420 420 T860 418 T1300 410 T1600 420 V640 H0Z" fill="url(#hillG)"/>
       <g class="fields" data-k="fields">${fields}</g>
       <g class="woods" data-k="woods">${woods}</g>
-      <path class="river" d="M1180 470 Q1260 480 1290 500 T1380 530 T1420 560" stroke="#7fb0c4" stroke-width="14" fill="none" stroke-linecap="round" opacity=".9"/>
-      ${orchard}${parkTrees}
-      <g class="it" data-from="1902" data-to="9999"><g class="grow"><path d="M0 ${BACK - 14} H1600 V${BACK + 8} H0Z" fill="#8a7a66"/>${Array.from({ length: 40 }, (_, i) => `<path d="M${i * 40} ${BACK - 14} v22" stroke="rgba(0,0,0,.15)"/>`).join("")}</g></g>
-      <g class="it" data-from="1838" data-to="9999"><g class="grow"><path class="rails" d="M0 ${BACK - 16} H1600" stroke="#3a3330" stroke-width="4"/><path d="M0 ${BACK - 12} H1600" stroke="#6b5a48" stroke-width="5" stroke-dasharray="4 8"/></g></g>
-      <g class="it" data-from="1931" data-to="9999"><g class="grow">${Array.from({ length: 9 }, (_, i) => `<path d="M${i * 200 + 40} ${BACK - 16} v-76 M${i * 200 + 28} ${BACK - 86} h24" stroke="#4a4440" stroke-width="3"/>`).join("")}<path d="M0 ${BACK - 82} H1600" stroke="#4a4440" stroke-width="1.5"/></g></g>
+      <path class="river" d="M470 470 Q540 482 580 500 T660 530 T700 560" stroke="#7fb0c4" stroke-width="14" fill="none" stroke-linecap="round" opacity=".9"/>
+      ${orchard}${parkTrees}${pond}
+      <g class="it" data-from="1916" data-to="9999"><g class="grow"><path d="M0 ${BACK - 14} H1600 V${BACK + 8} H0Z" fill="#8a7a66"/>${Array.from({ length: 40 }, (_, i) => `<path d="M${i * 40} ${BACK - 14} v22" stroke="rgba(0,0,0,.15)"/>`).join("")}</g></g>
+      <g class="it" data-from="1837" data-to="9999"><g class="grow"><path class="rails" d="M0 ${BACK - 16} H1600" stroke="#3a3330" stroke-width="4"/><path d="M0 ${BACK - 12} H1600" stroke="#6b5a48" stroke-width="5" stroke-dasharray="4 8"/></g></g>
+      <g class="it" data-from="1930" data-to="9999"><g class="grow">${Array.from({ length: 9 }, (_, i) => `<path d="M${i * 200 + 40} ${BACK - 16} v-76 M${i * 200 + 28} ${BACK - 86} h24" stroke="#4a4440" stroke-width="3"/>`).join("")}<path d="M0 ${BACK - 82} H1600" stroke="#4a4440" stroke-width="1.5"/></g></g>
       ${back}
       ${trains}
       ${mill}
       <rect x="0" y="${GROUND - 2}" width="${W}" height="${H - GROUND}" fill="url(#grassG)"/>
-      <g class="it" data-from="1923" data-to="9999"><g class="grow"><path d="M990 ${GROUND + 60} Q1120 ${GROUND + 50} 1300 ${GROUND + 62} V640 H990Z" fill="#7ea653"/></g></g>
+      <g class="it" data-from="1908" data-to="9999"><g class="grow"><path d="M990 ${GROUND + 60} Q1120 ${GROUND + 50} 1300 ${GROUND + 62} V640 H990Z" fill="#7ea653"/></g></g>
       ${front}
       ${streetMaples}
+      ${lamps}
       <g class="road">
         <rect class="road-dirt" x="0" y="${GROUND + 18}" width="${W}" height="44" fill="#b59a6e"/>
         <rect class="road-paved it-fade" data-from="1910" x="0" y="${GROUND + 18}" width="${W}" height="44" fill="#6f6862"/>
         <rect class="road-asphalt it-fade" data-from="1950" x="0" y="${GROUND + 18}" width="${W}" height="44" fill="#4a4746"/>
         <path class="it-fade" data-from="1950" d="M0 ${GROUND + 40} H${W}" stroke="#f3cf7a" stroke-width="2.5" stroke-dasharray="26 22"/>
-        <g class="it-fade" data-from="2018">${["#e53935", "#fb8c00", "#fdd835", "#43a047", "#1e88e5", "#8e24aa"].map((c, i) => `<rect x="${900 + i * 12}" y="${GROUND + 18}" width="10" height="44" fill="${c}"/>`).join("")}</g>
         <path class="it-fade" data-from="1910" d="M0 ${GROUND + 16} H${W}" stroke="#cfc6b6" stroke-width="4"/>
       </g>
       ${people}
-      ${frisbee}
       <rect width="${W}" height="${H}" fill="url(#vig)" pointer-events="none"/>
     </svg>
     <div class="scene-grain"></div>
@@ -321,7 +335,7 @@
   }
   function mediumFor(y) {
     if (y < 1666) return ["Imagined", "Before written records"];
-    if (y < 1839) return ["As if painted", "in the Hudson River School manner, like Asher Durand"];
+    if (y < 1839) return ["As if painted", "in the Hudson River School manner"];
     if (y < 1900) return ["As if photographed", "albumen print"];
     if (y < 1935) return ["As if on a postcard", "real-photo postcard"];
     if (y < 1975) return ["As if on Kodachrome", "color slide"];

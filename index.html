@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Maplewood Through Time · A fan history of Maplewood, NJ</title>
-  <meta name="description" content="Slide through 360 years of Maplewood, New Jersey: Lenape trails, stone farmhouses, the railroad, the suburban boom and today.">
+  <title>South Orange Through Time · A fan history of South Orange, NJ</title>
+  <meta name="description" content="Slide through 360 years of South Orange, New Jersey: Lenape trails, the Old Stone House, the railroad and water cure, Montrose, Village Hall and today.">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
@@ -15,9 +15,9 @@
 <main>
   <header class="hero" id="hero">
     <div class="wrap hero-text">
-      <div class="eyebrow">Maplewood, New Jersey · since before it had a name</div>
-      <h1>Step into <span class="hl">360 years</span> of Maplewood</h1>
-      <p class="lede">Drag the slider and watch the town rebuild itself. Stone farmhouses rise on Ridgewood Road, the steam train arrives, Tudors and foursquares fill the farm fields, and Memorial Park grows in. Click anything that glows to hear its story.</p>
+      <div class="eyebrow">South Orange, New Jersey · since before it had a name</div>
+      <h1>Step into <span class="hl">360 years</span> of South Orange</h1>
+      <p class="lede">Drag the slider and watch the town rebuild itself. Stone farmhouses rise on Ridgewood Road, the steam train arrives, the gas lamps are lit, Montrose's mansions and Village Hall go up, and the station rises onto its embankment. Click anything that glows to hear its story. The town's name changes as you go.</p>
     </div>
 
     <div class="scene-frame">
@@ -35,7 +35,7 @@
     <div class="wrap era-grid">
       <article class="era-story" aria-live="polite">
         <div class="eyebrow" id="eraRange">1904–1929</div>
-        <h2 id="eraName">The Great Suburban Boom</h2>
+        <h2 id="eraName">The Independent Village</h2>
         <p class="era-tag" id="eraTag"></p>
         <div id="eraBody"></div>
         <p class="sources" id="eraSources"></p>
@@ -55,7 +55,8 @@
         </div>
         <div class="stat card name-card">
           <div class="stat-k">This place was called</div>
-          <div class="stat-v small-v" id="statName">Jefferson Village</div>
+          <div class="stat-v small-v" id="statName">Village of South Orange</div>
+          <div class="small muted" id="statNameSub"></div>
         </div>
       </aside>
     </div>
@@ -68,24 +69,24 @@
   <section class="section dark">
     <div class="wrap">
       <div class="eyebrow">Three ways in</div>
-      <h2 class="reveal">Explore the town that grew around a maple</h2>
+      <h2 class="reveal">Explore the village of gaslight</h2>
       <div class="grid cols-3 doors">
         <a class="door reveal" href="explore.html">
           <div class="door-art" data-art="map"></div>
           <h3>Explore the Map</h3>
-          <p>A living map of more than 50 historic places. Turn back the clock and watch pins appear and vanish, from Lenape trails to the 2018 rainbow crosswalks.</p>
+          <p>A living map of about 70 historic places on dated survey maps. Turn back the clock and watch the boundary, the town's name and the seat of government change with the year.</p>
           <span class="go">Open the map →</span>
         </a>
         <a class="door reveal d1" href="house.html">
           <div class="door-art" data-art="house"></div>
           <h3>Your House's Story</h3>
-          <p>Type any Maplewood address and get a story of that spot through time: which colonial farm district it sat in, the old road nearby, and what the town was like the year your house went up.</p>
+          <p>Type any South Orange address and get a story of that spot through time: its neighborhood, the old road nearby, whether it was inside the 1869 Village, and what the town was called the year your house went up.</p>
           <span class="go">Tell my house's story →</span>
         </a>
         <a class="door reveal d2" href="timeline.html">
           <div class="door-art" data-art="time"></div>
           <h3>The Timeline</h3>
-          <p>Scroll from 1666 to today, through the South Orange separation, the 1922 renaming, the Porgy and Bess revival and the birth of Ultimate Frisbee.</p>
+          <p>Scroll from 1666 to today, through the 1869 charter, the 1904 separation from the township, Edison's electric train and the transit village.</p>
           <span class="go">Start scrolling →</span>
         </a>
       </div>
@@ -95,7 +96,7 @@
   <section class="section">
     <div class="wrap">
       <div class="eyebrow">Did you know?</div>
-      <h2 class="reveal">Small town, outsized footnotes</h2>
+      <h2 class="reveal">Small village, outsized footnotes</h2>
       <div class="facts" id="facts"></div>
     </div>
   </section>
@@ -105,10 +106,10 @@
       <div>
         <div class="eyebrow">Your address, through time</div>
         <h2>What stood on your street in 1790?</h2>
-        <p class="lede">Enter a Maplewood address and we'll put together the story of that spot, from farm to suburb.</p>
+        <p class="lede">Enter a South Orange address and we'll put together the story of that spot, from farm to suburb.</p>
       </div>
       <form class="cta-form" action="house.html" method="get">
-        <input type="text" name="q" placeholder="e.g. 523 Ridgewood Road" aria-label="Maplewood street address" required>
+        <input type="text" name="q" placeholder="e.g. 140 Montrose Avenue" aria-label="South Orange street address" required>
         <button class="btn" type="submit">Tell its story</button>
       </form>
     </div>

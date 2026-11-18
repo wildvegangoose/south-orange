@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const MW = window.MW;
   const $ = s => document.querySelector(s);
   const params = new URLSearchParams(location.search);
-  const startYear = +params.get("year") || 1905;
+  const startYear = +params.get("year") || 1896;
 
   const scene = MW.Scene($("#scene"));
   MW.leaves($("#hero"), 16);
@@ -11,19 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (sc.scrollWidth > sc.clientWidth) sc.scrollLeft = 0;
   sc.addEventListener("scroll", () => { const h = $("#swipeHint"); if (h) h.remove(); }, { once: true });
 
-  const placeName = y =>
-    y < 1666 ? "Lenapehoking, the Lenape homeland" :
-    y < 1798 ? "Newark's mountain farms & North Farms" :
-    y < 1830 ? "Jefferson Village & North Farms" :
-    y < 1860 ? "Jefferson Village & Middleville" :
-    y < 1861 ? "Jefferson Village, with a new \"Maplewood\" station" :
-    y < 1904 ? "South Orange Township (Maplewood, Hilton & South Orange village)" :
-    y < 1922 ? "South Orange Township (after South Orange village left)" :
-    y === 1922 ? "Township of Maplewood (renamed Nov. 7, 1922)" : "Township of Maplewood";
-
   // population sparkline
   const spark = $("#spark");
-  const pts = MW.census.map(([y, p]) => [(y - 1870) / (2024 - 1870) * 300, 66 - p / 27000 * 60]);
+  const pts = MW.census.map(([y, p]) => [(y - 1870) / (2024 - 1870) * 300, 66 - p / 20000 * 60]);
   spark.innerHTML = `<path d="M${pts.map(p => p.map(n => n.toFixed(1)).join(" ")).join(" L")}" fill="none" stroke="#b8381e" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
     <path d="M0 70 L${pts.map(p => p.map(n => n.toFixed(1)).join(" ")).join(" L")} L300 70Z" fill="rgba(184,56,30,.12)"/>
     <line id="sparkNow" x1="0" x2="0" y1="0" y2="70" stroke="#1f3a2e" stroke-width="2" vector-effect="non-scaling-stroke" stroke-dasharray="3 3"/>`;
@@ -36,11 +26,13 @@ document.addEventListener("DOMContentLoaded", () => {
     $("#statYear").textContent = y;
     const pop = MW.populationFor(y);
     if (pop.value) { MW.countTo($("#statPop"), pop.value, 500); $("#statPop").classList.remove("small-v"); $("#statPopNote").textContent = MW.census.some(c => c[0] === y) ? "U.S. Census count" : "Estimated between census counts"; }
-    else { $("#statPop").textContent = pop.label; $("#statPop").dataset.v = 0; $("#statPop").classList.add("small-v"); $("#statPopNote").textContent = "No census for today's boundaries yet"; }
+    else { $("#statPop").textContent = pop.label; $("#statPop").dataset.v = 0; $("#statPop").classList.add("small-v"); $("#statPopNote").textContent = "No census count for the Village yet"; }
     const x = Math.max(0, Math.min(300, (y - 1870) / (2024 - 1870) * 300));
     const now = $("#sparkNow"); now.setAttribute("x1", x); now.setAttribute("x2", x); now.style.opacity = y < 1870 ? 0 : 1;
-    MW.countTo($("#statStanding"), MW.places.filter(p => p.year <= y && (!p.end || p.end >= y)).length, 400);
-    $("#statName").textContent = placeName(y);
+    MW.countTo($("#statStanding"), MW.localPlaces().filter(p => p.year <= y && (!p.end || p.end >= y)).length, 400);
+    const nm = MW.nameFor(y);
+    $("#statName").textContent = nm.name;
+    $("#statNameSub").textContent = nm.sub;
 
     if (era !== lastEra) {
       lastEra = era;
@@ -51,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
       $("#eraTag").textContent = era.tagline;
       $("#eraBody").innerHTML = era.story.map(p => `<p>${MW.esc(p)}</p>`).join("");
       $("#eraSources").innerHTML = "Sources: " + MW.sourceLinks(era.sources);
-      const ms = MW.places.filter(p => p.year >= Math.max(era.from, 1500) && p.year <= era.to);
+      const ms = MW.localPlaces().filter(p => p.year >= Math.max(era.from, 1500) && p.year <= era.to);
       $("#moments").innerHTML = ms.map((p, i) => `<button class="moment reveal" style="transition-delay:${i * 40}ms" data-y="${p.year}" data-id="${p.id}">
           <span class="m-year">${p.year < 1600 ? "Pre-1666" : p.year}</span><span class="tag ${p.kind}">${MW.kindLabel[p.kind]}</span>
           <strong>${MW.esc(p.title)}</strong><span class="small muted">${MW.esc(p.address)}</span></button>`).join("") || `<p class="muted">No dated places in this era yet.</p>`;
@@ -62,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const slider = MW.timeSlider($("#slider"), {
     min: 1600, max: 2026, value: startYear,
-    ticks: [1666, 1743, 1806, 1838, 1860, 1904, 1922, 1950, 1996, 2026],
+    ticks: [1666, 1773, 1837, 1869, 1904, 1950, 2026],
     onChange: update
   });
   update(startYear);
@@ -98,12 +90,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // facts
   const facts = [
-    ["1847", "The face on the first U.S. stamps", "Asher B. Durand, born in Jefferson Village in 1796, made engravings of Washington and Franklin that were used on the first U.S. postage stamps.", 1847, ["dhPost"]],
-    ["1855", "Strawberries with a famous name", "Inventor Seth Boyden retired to Middleville, later Hilton, and grew the celebrated \"Hilton Strawberries.\"", 1855, ["hmHist", "dhMtn"]],
-    ["1921", "Tee time", "Dr. William Lowell, a Maplewood dentist and golfer, began making the wooden \"Reddy Tee\" that changed golf.", 1921, ["lowell"]],
-    ["132 yrs", "The longest wait for a post office", "Jefferson Village asked for a post office around 1815. Maplewood finally got first-class status in July 1947.", 1947, ["dhPost"]],
-    ["1941", "Porgy and Bess, reborn", "Cheryl Crawford's revival of Gershwin's opera was staged at the Maplewood Theatre before going to Broadway.", 1941, ["crawford", "cinema"]],
-    ["1968", "Ultimate Frisbee is born", "Columbia High School students invented the sport. A plaque in the parking lot marks the birthplace.", 1968, ["wiki"]]
+    ["1680", "A house older than the town", "Newark's grant of September 27, 1680 mentions land \"near the Stone House.\" The Old Stone House on South Orange Avenue is the only pre-1800 building left in the Village.", 1773, ["nrStone"]],
+    ["1818", "Free school, first step", "The Columbian School's trustees waived firewood fees for poor children in 1818, \"the first step toward making common-school education free to all.\"", 1818, ["shaw"]],
+    ["1883", "The man who set the clocks", "William F. Allen, credited with organizing Standard Time, built a villa on Scotland Road and helped save the valley that became Meadowland Park.", 1889, ["nrMontrose"]],
+    ["1 of 2", "A village, not a town", "Around 1975 the Village Hall history counted South Orange as one of only two New Jersey municipalities incorporated as a village. Its trustees met in rented rooms for 25 years before Village Hall opened in 1895.", 1895, ["soplVH"]],
+    ["1929", "Ruth and Gehrig at Cameron Field", "In October 1929 Babe Ruth and Lou Gehrig played an exhibition game at Cameron Field.", 1929, ["soplTime"]],
+    ["1930", "Edison drives the first electric train", "In September 1930 \"a frail Thomas Edison\" inaugurated electric service between Hoboken and South Orange.", 1930, ["wiki", "station"]]
   ];
   $("#facts").innerHTML = facts.map(([big, h, t, y, s], i) => `<article class="fact card reveal d${i % 3}" data-y="${y}">
     <div class="fact-big">${big}</div><h3>${h}</h3><p>${t}</p><div class="sources">${MW.sourceLinks(s)}</div><button class="go linkish">See it in ${y} →</button></article>`).join("");
