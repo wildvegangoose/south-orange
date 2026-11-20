@@ -1,5 +1,5 @@
 """Index + render the library's real-estate (multiple listing) cards: one photo card per house, 1920s-1980s."""
-import os, re, json, subprocess, sys
+import os, re, json, subprocess, sys, urllib.parse
 from concurrent.futures import ThreadPoolExecutor
 from common import BASE, OUT, fetch, slug, SLUG, DIG
 
@@ -10,9 +10,10 @@ cards, streets = [], set()
 for i in ids:
     h = fetch(f"{BASE}/{SLUG}/views/view.php?id={i}").decode("utf-8", "ignore")
     for f in re.findall(rf"file=(/{SLUG}/data/realestate/[^\"&]+\.pdf)", h):
-        street = f.split("/")[-2]; name = f.split("/")[-1][:-4]
-        m = re.match(r"^(\d+[A-Z]?(?:-\d+)?)\s+(.*)$", name)
-        num, st = (m.group(1), m.group(2)) if m else (None, name)
+        street = urllib.parse.unquote(f.split("/")[-2])
+        name = urllib.parse.unquote(f.split("/")[-1][:-4])
+        m = re.match(r"^(\d+(?:-[A-Z]|[A-Z])?(?:\s*(?:[-,&]|\()\s*\d+[A-Z]?\)?)*)\s+(.*)$", name)
+        num, st = (m.group(1).strip(), m.group(2)) if m else (None, name)
         streets.add(street)
         cards.append({"street": street, "number": num, "label": name, "pdf": f})
     print(f"street page {i}: {len(cards)} cards so far", file=sys.stderr)
@@ -24,7 +25,10 @@ def render(c):
     d = os.path.join(OUT, "realestate", slug(c["street"]))
     base = os.path.join(d, slug(c["label"]))
     c["img"] = os.path.relpath(base + "-1.jpg", OUT)
-    if os.path.exists(base + "-1.jpg"): return c
+    if os.path.exists(base + "-1.jpg"):
+        if os.path.exists(base + "-2.jpg"):
+            c["back"] = os.path.relpath(base + "-2.jpg", OUT)
+        return c
     pdf = base + ".pdf"
     try:
         fetch(BASE + c["pdf"], pdf, pause=0.25, timeout=30, tries=6)

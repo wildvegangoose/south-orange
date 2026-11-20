@@ -6,7 +6,7 @@ var MW = window.MW = window.MW || {};
 MW.people = [
 {
 "name": "William Redmond",
-"url": "https://en.wikipedia.org/wiki/William_Redmond_(merchant",
+"url": "https://en.wikipedia.org/wiki/William_Redmond_(merchant)",
 "born": 1804,
 "died": 1874,
 "desc": "Irish-born New York merchant (Wm. Redmond & Sons) and a founder of the Union Club",
@@ -67,7 +67,7 @@ MW.people = [
 },
 {
 "name": "James Baldwin",
-"url": "https://en.wikipedia.org/wiki/James_Baldwin_(educator",
+"url": "https://en.wikipedia.org/wiki/James_Baldwin_(educator)",
 "born": 1841,
 "died": 1925,
 "desc": "Indiana school superintendent turned textbook editor and children's author (Fifty Famous Stories Retold)",
@@ -94,9 +94,8 @@ MW.people = [
 "homes": [
 {
 "address": "262 Charlton Avenue",
-"years": "1920",
-"src": "New Jersey Law Journal, spelled \"Charleton\"",
-"probable": true
+"years": "1916–1920",
+"src": "Oranges city directories; NJ Law Journal"
 }
 ]
 },
@@ -120,9 +119,8 @@ MW.people = [
 "homes": [
 {
 "address": "602 Centre Street",
-"years": "until 1944",
-"src": "a 2009 community history post",
-"probable": true
+"years": "1910–1944",
+"src": "Oranges city directories"
 }
 ]
 },
@@ -151,7 +149,14 @@ MW.people = [
 "died": 1944,
 "desc": "Businesswoman and philanthropist who co-founded L. Bamberger & Co. with her brother Louis, and with him the Institute for Advanced Study",
 "tie": "She, Louis Bamberger, her first husband Louis Frank and Felix Fuld would 'reside in a single-family home in South Orange ... for the remainder of their respective lives'.",
-"field": "business"
+"field": "business",
+"homes": [
+{
+"address": "602 Centre Street",
+"years": "1910–1944",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Alexander Priestly Camphor",
@@ -169,7 +174,14 @@ MW.people = [
 "died": 1929,
 "desc": "Co-founder of the L. Bamberger & Company department store and philanthropist",
 "tie": "Lived with the Bambergers first in a rented house, then in 'a large home on Centre Street in South Orange'. Died of pneumonia at his South Orange home on Jan. 20, 1929.",
-"field": "business"
+"field": "business",
+"homes": [
+{
+"address": "602 Centre Street",
+"years": "1910–1929",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Joseph Scheuerle",
@@ -261,7 +273,7 @@ MW.people = [
 },
 {
 "name": "Art Howe",
-"url": "https://en.wikipedia.org/wiki/Art_Howe_(American_football",
+"url": "https://en.wikipedia.org/wiki/Art_Howe_(American_football)",
 "born": 1890,
 "died": 1955,
 "desc": "Yale quarterback who was president of Hampton Institute (1930–1940)",
@@ -369,7 +381,7 @@ MW.people = [
 },
 {
 "name": "Tony Smith",
-"url": "https://en.wikipedia.org/wiki/Tony_Smith_(sculptor",
+"url": "https://en.wikipedia.org/wiki/Tony_Smith_(sculptor)",
 "born": 1912,
 "died": 1980,
 "desc": "Sculptor, architect and painter associated with Minimalism",
@@ -378,7 +390,7 @@ MW.people = [
 },
 {
 "name": "Johnny Long",
-"url": "https://en.wikipedia.org/wiki/Johnny_Long_(American_football",
+"url": "https://en.wikipedia.org/wiki/Johnny_Long_(American_football)",
 "born": 1914,
 "died": 1975,
 "desc": "Chicago Bears quarterback",
@@ -550,7 +562,7 @@ MW.people = [
 },
 {
 "name": "Don Rogers",
-"url": "https://en.wikipedia.org/wiki/Don_Rogers_(offensive_lineman",
+"url": "https://en.wikipedia.org/wiki/Don_Rogers_(offensive_lineman)",
 "born": 1936,
 "died": null,
 "desc": "NFL and AFL offensive lineman",
@@ -636,7 +648,7 @@ MW.people = [
 },
 {
 "name": "Michael Lally",
-"url": "https://en.wikipedia.org/wiki/Michael_Lally_(poet",
+"url": "https://en.wikipedia.org/wiki/Michael_Lally_(poet)",
 "born": 1942,
 "died": null,
 "desc": "Poet and author whose South Orange Sonnets (1972) won a New York Poetry Center Discovery Award",
@@ -721,7 +733,7 @@ MW.people = [
 },
 {
 "name": "David Levin",
-"url": "https://en.wikipedia.org/wiki/David_Levin_(balloonist",
+"url": "https://en.wikipedia.org/wiki/David_Levin_(balloonist)",
 "born": 1948,
 "died": 2017,
 "desc": "Balloonist and the only winner of the 'triple crown' of gas, hot-air and Gordon Bennett Cup championships",
@@ -845,7 +857,7 @@ MW.people = [
 },
 {
 "name": "Peter Shapiro",
-"url": "https://en.wikipedia.org/wiki/Peter_Shapiro_(financier",
+"url": "https://en.wikipedia.org/wiki/Peter_Shapiro_(financier)",
 "born": 1952,
 "died": 2024,
 "desc": "Youngest person ever elected to the NJ General Assembly (1975); Essex County Executive (1979–1987); later a financial services executive",
@@ -932,7 +944,7 @@ MW.people = [
 },
 {
 "name": "Marc Roberts",
-"url": "https://en.wikipedia.org/wiki/Marc_Roberts_(sports_agent",
+"url": "https://en.wikipedia.org/wiki/Marc_Roberts_(sports_agent)",
 "born": 1959,
 "died": null,
 "desc": "Entrepreneur, sports agent and real estate developer",
@@ -942,7 +954,7 @@ MW.people = [
 },
 {
 "name": "Steve Mills",
-"url": "https://en.wikipedia.org/wiki/Steve_Mills_(sports_executive",
+"url": "https://en.wikipedia.org/wiki/Steve_Mills_(sports_executive)",
 "born": 1959,
 "died": null,
 "desc": "Sports executive; president of the New York Knicks twice between 2013 and 2020",
@@ -1041,7 +1053,7 @@ MW.people = [
 },
 {
 "name": "Robert Kirsch",
-"url": "https://en.wikipedia.org/wiki/Robert_Kirsch_(judge",
+"url": "https://en.wikipedia.org/wiki/Robert_Kirsch_(judge)",
 "born": 1966,
 "died": null,
 "desc": "U.S. District Judge for the District of New Jersey (since 2023), formerly a state court judge",
@@ -1171,7 +1183,7 @@ MW.people = [
 },
 {
 "name": "Joe Martinez",
-"url": "https://en.wikipedia.org/wiki/Joe_Martinez_(baseball",
+"url": "https://en.wikipedia.org/wiki/Joe_Martinez_(baseball)",
 "born": 1983,
 "died": null,
 "desc": "MLB pitcher (Giants and other clubs)",
@@ -1181,7 +1193,7 @@ MW.people = [
 },
 {
 "name": "Adam Goldstein",
-"url": "https://en.wikipedia.org/wiki/Adam_Goldstein_(author",
+"url": "https://en.wikipedia.org/wiki/Adam_Goldstein_(author)",
 "born": 1988,
 "died": null,
 "desc": "Author and software entrepreneur who co-wrote Missing Manual computer books with David Pogue as a teenager",
@@ -1191,7 +1203,7 @@ MW.people = [
 },
 {
 "name": "Kai Greene",
-"url": "https://en.wikipedia.org/wiki/Kai_Greene_(soccer",
+"url": "https://en.wikipedia.org/wiki/Kai_Greene_(soccer)",
 "born": 1993,
 "died": null,
 "desc": "Professional soccer defender (e.g., Rio Grande Valley FC Toros, USL)",
@@ -1211,7 +1223,7 @@ MW.people = [
 },
 {
 "name": "Olivia Baker",
-"url": "https://en.wikipedia.org/wiki/Olivia_Baker_(runner",
+"url": "https://en.wikipedia.org/wiki/Olivia_Baker_(runner)",
 "born": 1996,
 "died": null,
 "desc": "Middle-distance runner specializing in the 800 meters",
@@ -1291,7 +1303,7 @@ MW.people = [
 },
 {
 "name": "Mark Armstrong",
-"url": "https://en.wikipedia.org/wiki/Mark_Armstrong_(basketball",
+"url": "https://en.wikipedia.org/wiki/Mark_Armstrong_(basketball)",
 "born": 2004,
 "died": null,
 "desc": "Point guard who played college basketball at Villanova and has played in the NBA G League",
@@ -1321,7 +1333,7 @@ MW.people = [
 },
 {
 "name": "Andrew Jacobs",
-"url": "https://en.wikipedia.org/wiki/Andrew_Jacobs_(journalist",
+"url": "https://en.wikipedia.org/wiki/Andrew_Jacobs_(journalist)",
 "born": null,
 "died": null,
 "desc": "New York Times reporter and documentary director (Four Seasons Lodge)",
@@ -1382,7 +1394,7 @@ MW.people = [
 },
 {
 "name": "Ken Bloom",
-"url": "https://en.wikipedia.org/wiki/Ken_Bloom_(physicist",
+"url": "https://en.wikipedia.org/wiki/Ken_Bloom_(physicist)",
 "born": null,
 "died": null,
 "desc": "Particle physicist; professor at the University of Nebraska–Lincoln and Fermilab visiting scientist",

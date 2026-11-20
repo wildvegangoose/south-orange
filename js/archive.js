@@ -32,8 +32,20 @@
   function matchStreet(index, road) {
     const n = normRoad(road); if (!n) return null;
     if (index[slug(n)]) return slug(n);
-    const bare = n.replace(/\s+(ROAD|AVENUE|STREET|PLACE|TERRACE|DRIVE|COURT|LANE|PARKWAY|WAY|CIRCLE|BOULEVARD)$/, "");
-    return Object.keys(index).find(k => index[k].name.replace(/\s+(ROAD|AVENUE|STREET|PLACE|TERRACE|DRIVE|COURT|LANE|PARKWAY|WAY|CIRCLE|BOULEVARD)$/, "") === bare) || null;
+    const DIR = { N: "NORTH", S: "SOUTH", E: "EAST", W: "WEST", NORTH: "NORTH", SOUTH: "SOUTH", EAST: "EAST", WEST: "WEST" };
+    let alt = n.replace(/\bCENTER\b/g, "CENTRE").replace(/\bPKY\b/g, "PARKWAY").replace(/\bCRESCENT\b/g, "CRES");
+    const dm = alt.match(/^(.+)\s+(N|S|E|W|NORTH|SOUTH|EAST|WEST)$/);
+    if (dm && alt !== "MOUNTAIN WAY SOUTH") alt = DIR[dm[2]] + " " + dm[1];
+    if (alt === "WEST MONTROSE AVENUE") alt = "MONTROSE AVENUE";
+    if (alt === "WEST WARD PLACE") alt = "WARD PLACE";
+    if (alt === "NORTHWOODS DRIVE") alt = "NORTH WOODS DRIVE";
+    if (alt === "WHITEOAK DRIVE") alt = "WHITE OAK DRIVE";
+    if (index[slug(alt)]) return slug(alt);
+    const bare = alt.replace(/\s+(ROAD|AVENUE|STREET|PLACE|TERRACE|DRIVE|COURT|LANE|PARKWAY|WAY|CIRCLE|BOULEVARD|CRES)$/, "");
+    const hasSuffix = bare !== alt;
+    const matches = Object.keys(index).filter(k => index[k].name.replace(/\s+(ROAD|AVENUE|STREET|PLACE|TERRACE|DRIVE|COURT|LANE|PARKWAY|WAY|CIRCLE|BOULEVARD|CRES)$/, "") === bare);
+    if (matches.length === 1) return matches[0];
+    return !hasSuffix && matches.length ? matches[0] : null;
   }
 
   function story(addr, ls) {
@@ -66,10 +78,13 @@
     return (i > 140 ? "…" : "") + s.replace(/^\S*\s/, "") + "…";
   }
 
+  const cleanLabel = s => { try { return decodeURIComponent(s || ""); } catch (e) { return (s || "").replace(/%26/g, "&"); } };
+
   function render(el, addr, street, num, house, streetData) {
     const ls = (house && house.listings) || [], cards = (house && house.cards) || [], news = (house && house.news) || [];
     const byYear = {}; ls.forEach(l => (byYear[l.year] = byYear[l.year] || []).push(l));
-    const docs = ls.filter(l => l.crop).reduce((a, l) => (a.some(x => x.year === l.year) ? a : a.concat(l)), []);
+    const docs = ls.filter(l => l.crop).reduce((a, l) => (a.some(x => x.crop === l.crop) ? a : a.concat(l)), []);
+    const hasLoc = news.some(n => n.iiif), hasScrap = news.some(n => !n.iiif);
     // nearby houses on the same street that have photos (shown when this address has none)
     const nearby = !cards.length && streetData ? Object.entries(streetData.houses).filter(([n, h]) => h.cards.length && n !== num)
       .sort((a, b) => Math.abs(+a[0] - +num) - Math.abs(+b[0] - +num)).slice(0, 3) : [];
@@ -79,17 +94,17 @@
         <div class="eyebrow">From the city directories and old newspapers</div>
         <h2>The record for ${esc(addr)}</h2>
         <p class="lede">${ls.length ? story(addr, ls) : `The library's city directories don't list this exact number through 1950. The house may be newer, the number may have changed, or the scanned text may have garbled it.`}</p>
-        <p class="arch-local small">Residents come from the Oranges city directories in the Maplewood Memorial Library's digital archive, which list South Orange households with the code "SO". Newspaper mentions come from the Library of Congress's Chronicling America collection (public domain). Every item links back to the original. Directory names are shown through 1950.</p>
+        <p class="arch-local small">Residents come from the Oranges city directories in the Maplewood Memorial Library's digital archive, which list South Orange households with the code "SO" (or "S O" in earlier editions). Newspaper mentions come from the Library of Congress's Chronicling America collection (public domain). Every item links back to the original. Directory names are shown through 1950.</p>
       </div>
       <div class="arch-grid ${cards.length ? "" : "nophoto"}">
         ${cards.length ? `<figure class="photo-card reveal">${cards.map((c, i) => `<div class="pc ${i ? "hidden" : ""}" data-i="${i}">
-            <button class="flip" ${c.back ? "" : "disabled"} aria-label="Flip card"><img src="${ROOT + c.img}" alt="Real-estate listing card for ${esc(c.label)}" loading="lazy">
+            <button class="flip" ${c.back ? "" : "disabled"} aria-label="Flip card"><img src="${ROOT + c.img}" alt="Real-estate listing card for ${esc(cleanLabel(c.label))}" loading="lazy">
               ${c.back ? `<img class="back" src="${ROOT + c.back}" alt="Back of the listing card" loading="lazy">` : ""}</button>
-            <figcaption>Real-estate listing card for <b>${esc(nice(c.label))}</b>, from the library's real-estate file (Board of Realtors of the Oranges and Maplewood, 1920s–1980s).
-              ${c.back ? "Click the photo to see the back of the card. " : ""}<a href="${c.src}" target="_blank" rel="noopener">Original in the library viewer →</a></figcaption></div>`).join("")}
+            <figcaption>Real-estate listing card for <b>${esc(nice(cleanLabel(c.label)))}</b>, from the library's real-estate file (Board of Realtors of the Oranges and Maplewood, 1920s–1980s).
+              ${c.back ? "Click the card to see the back. " : ""}<a href="${c.src}" target="_blank" rel="noopener">Original in the library viewer →</a></figcaption></div>`).join("")}
             ${cards.length > 1 ? `<div class="pc-nav">${cards.map((c, i) => `<button data-i="${i}" class="${i ? "" : "on"}">${i + 1}</button>`).join("")}</div>` : ""}</figure>`
           : nearby.length ? `<div class="nearby reveal"><h3>On your street, in the photo file</h3><div class="nb-photos">${nearby.map(([n, h]) =>
-            `<a href="${h.cards[0].src}" target="_blank" rel="noopener"><img src="${ROOT + h.cards[0].img}" alt="${esc(h.cards[0].label)}" loading="lazy"><span>${esc(nice(h.cards[0].label))}</span></a>`).join("")}</div>
+            `<a href="${h.cards[0].src}" target="_blank" rel="noopener"><img src="${ROOT + h.cards[0].img}" alt="${esc(cleanLabel(h.cards[0].label))}" loading="lazy"><span>${esc(nice(cleanLabel(h.cards[0].label)))}</span></a>`).join("")}</div>
             <p class="small muted">No listing photo is filed for this number. These are the closest houses on the same street that have one.</p></div>` : ""}
         <div class="residents reveal d1">
           <h3>Who lived here <span class="small muted">(city directories, through 1950)</span></h3>
@@ -99,12 +114,12 @@
           <p class="small muted">The text was read by computer from the scans, so names can be misspelled. The scanned lines below, and the "scan ↗" links, show the originals.</p>
         </div>
       </div>
-      ${news.length ? `<div class="news reveal"><h3>In the news</h3><p class="small muted">Newspaper pages that mention this address, cropped from the scans. The text under each was read by computer, so expect typos. Click one to open the full page at the Library of Congress.</p>
-        <div class="news-grid">${news.slice().sort((a, b) => (a.kind === "ad") - (b.kind === "ad") || a.year - b.year).slice(0, 8).map(n => n.iiif
-          ? `<a class="clip loc" href="${n.src}" target="_blank" rel="noopener"><span class="doc-year">${n.year}</span><img src="${n.iiif}" alt="Newspaper page, ${n.date}" loading="lazy"><span class="doc-cap">${n.kind === "ad" ? "Classified ad · " : ""}${esc(nice(n.paper || "newspaper").replace(/\s*\(.*$/, ""))}, ${esc(n.date)}</span><span class="clip-snip">${esc(snip(n.snippet, num))}</span></a>`
-          : `<a class="clip" href="${n.src}" target="_blank" rel="noopener"><span class="doc-year">${n.year}</span><img src="${ROOT + n.crop}" alt="Newspaper clipping, ${n.year}" loading="lazy"><span class="doc-cap">Scrapbook, ${n.year}</span></a>`).join("")}</div></div>` : ""}
-      ${docs.length ? `<div class="docs reveal"><h3>Documents from the era</h3><p class="small muted">The actual directory lines for this address, cropped from the library's scans. Click one to open the full page.</p>
-        <div class="doc-strip">${docs.map(l => `<a class="doc" href="${l.src}" target="_blank" rel="noopener"><span class="doc-year">${l.year}</span><img src="${ROOT + l.crop}" alt="Directory line, ${l.year}" loading="lazy"><span class="doc-cap">${l.year} city directory</span></a>`).join("")}</div></div>` : ""}
+      ${news.length ? `<div class="news reveal"><h3>In the news</h3><p class="small muted">${hasLoc && hasScrap ? "Newspaper pages from the Library of Congress and library scrapbook clippings that mention this address. Click one to open the full scanned page." : hasLoc ? "Newspaper pages that mention this address, cropped from the scans. The text under each was read by computer, so expect typos. Click one to open the full page at the Library of Congress." : "Newspaper clippings from the library's scrapbooks that mention this address, cropped from the scans. Click one to open the full page in the library viewer."}</p>
+        <div class="news-grid">${news.slice().sort((a, b) => (a.kind === "ad") - (b.kind === "ad") || parseInt(a.year, 10) - parseInt(b.year, 10)).slice(0, 8).map(n => n.iiif
+          ? `<a class="clip loc" href="${n.src}" target="_blank" rel="noopener"><span class="doc-year">${esc(String(n.year))}</span><img src="${n.iiif}" alt="Newspaper page, ${esc(n.date)}" loading="lazy"><span class="doc-cap">${n.kind === "ad" ? "Classified ad · " : ""}${esc(nice(n.paper || "newspaper").replace(/\s*\(.*$/, ""))}, ${esc(n.date)}</span><span class="clip-snip">${esc(snip(n.snippet, num))}</span></a>`
+          : `<a class="clip" href="${n.src}" target="_blank" rel="noopener"><span class="doc-year">${esc(String(n.year))}</span><img src="${ROOT + n.crop}" alt="Newspaper clipping, ${esc(String(n.year))}" loading="lazy"><span class="doc-cap">Library scrapbook, ${esc(String(n.year))}</span></a>`).join("")}</div></div>` : ""}
+      ${docs.length ? `<div class="docs reveal"><h3>Documents from the era</h3><p class="small muted">The actual directory lines for this address, cropped from the library's scans. For ditto-dash (—) entries, the surname header from higher in the column is shown above a dashed line; click any scan to open the full page.</p>
+        <div class="doc-strip">${docs.map(l => `<a class="doc" href="${l.src}" target="_blank" rel="noopener"><span class="doc-year">${l.year}</span><img src="${ROOT + l.crop}" alt="Directory line, ${l.year}" loading="lazy"><span class="doc-cap">${l.year} city directory${l.surname || l.given ? ` · ${esc(person(l))}` : ""}</span></a>`).join("")}</div></div>` : ""}
     </div>`;
     el.hidden = false;
     el.querySelectorAll(".flip").forEach(b => b.onclick = () => b.classList.toggle("flipped"));

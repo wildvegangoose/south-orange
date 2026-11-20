@@ -7,6 +7,12 @@ from common import BASE, OUT, slug, load_streets, canon_street, SLUG, DIG, UA
 STREETS = load_streets()
 TMP = os.path.join(OUT, "_tmp"); os.makedirs(TMP, exist_ok=True)
 ADDR = re.compile(r"\b(\d{1,4})\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)\s+(road|Road|avenue|Avenue|ave|Ave|av|street|Street|place|Place|terrace|Terrace|drive|Drive|lane|Lane|court|Court|parkway|Parkway|Rd|St|Pl)\b\.?")
+OTHER_TOWN_AFTER = re.compile(
+    r"^\s*[,.;:\-–—]*\s*(?:Box\s+\S+\s+)?(?:Newark|Millburn|Short Hills|South Orange|East Orange|West Orange|Orange|"
+    r"Irvington|Union(?:\s+City)?|Springfield|Summit|Livingston|Montclair|Bloomfield|Elizabeth|Chatham|Madison|"
+    r"Morristown|Jersey City|New York|Manhattan|Brooklyn|Bronxville|Boston|Lowell|Scituate|Malden|N\.?\s*Y\.?(?:\s*C\.?)?)\b",
+    re.I,
+)
 BLOCK = re.compile(r'<block xMin="([\d.]+)" yMin="([\d.]+)" xMax="([\d.]+)" yMax="([\d.]+)">(.*?)</block>', re.S)
 PAGE = re.compile(r'<page width="([\d.]+)" height="([\d.]+)">(.*?)</page>', re.S)
 WORD = re.compile(r"<word[^>]*>(.*?)</word>", re.S)
@@ -18,13 +24,19 @@ def download(url, dst):
         time.sleep(4)
     raise RuntimeError("download failed " + url)
 
+def year_label(book_path):
+    m = re.search(r"/(\d{4}(?:-\d{4})?)", book_path)
+    if not m: return ""
+    y = m.group(1)
+    return f"{y[:4]}–{y[7:9]}" if "-" in y else y
+
 h = subprocess.run(["curl", "-sS", "-m", "60", f"{BASE}/{SLUG}/views/view.php?id={DIG['scrapbooks_id']}"], capture_output=True, text=True).stdout
 books = re.findall(rf"file=(/{SLUG}/data/scrapbooks/[^\"&]+\.pdf)", h)
 out_path = os.path.join(OUT, "data", "scrapbooks.json")
 found = json.load(open(out_path)) if os.path.exists(out_path) else []
 done = {f["book"] for f in found}
 for b in books:
-    year = re.search(r"/(\d{4})", b).group(1)
+    year = year_label(b)
     if b in done: continue
     pdf = os.path.join(TMP, os.path.basename(b))
     download(b, pdf)
@@ -34,6 +46,8 @@ for b in books:
         for x0, y0, x1, y1, inner in BLOCK.findall(body):
             text = html.unescape(" ".join(WORD.findall(inner)))
             for m in ADDR.finditer(text):
+                if OTHER_TOWN_AFTER.match(text[m.end(): m.end() + 45]):
+                    continue
                 st = canon_street(f"{m.group(2)} {m.group(3)}", STREETS)
                 if not st: continue
                 hits.append({"book": b, "year": year, "page": pno, "number": m.group(1), "street": st,
@@ -44,14 +58,14 @@ for b in books:
     for k, hit in enumerate(hits):
         p = hit["page"]
         if p not in pages:
-            base = os.path.join(TMP, f"sb_{year}_{p}")
+            base = os.path.join(TMP, f"sb_{slug(year)}_{p}")
             subprocess.run(["pdftoppm", "-r", "110", "-gray", "-jpeg", "-singlefile", "-f", str(p), "-l", str(p), pdf, base], check=True)
             pages = {p: Image.open(base + ".jpg")}; os.remove(base + ".jpg")
         im = pages[p]; s = 110 / 72
         x0, y0, x1, y1 = hit["bbox"]; pad = 30
         box = (max(0, int((x0 - pad) * s)), max(0, int((y0 - pad) * s)), min(im.width, int((x1 + pad) * s)), min(im.height, int((y1 + pad) * s)))
         if box[3] - box[1] > 900: box = (box[0], box[1], box[2], box[1] + 900)
-        rel = os.path.join("docs", "scrapbook", year, f"{slug(hit['street'])}-{hit['number']}-p{p}-{k}.jpg")
+        rel = os.path.join("docs", "scrapbook", slug(year), f"{slug(hit['street'])}-{hit['number']}-p{p}-{k}.jpg")
         os.makedirs(os.path.dirname(os.path.join(OUT, rel)), exist_ok=True)
         im.crop(box).save(os.path.join(OUT, rel), quality=72)
         hit["crop"] = rel; hit["src"] = f"https://www.digifind-it.com/IDIViewer/web/viewer.html?file={b}#page={p}"
