@@ -215,6 +215,36 @@ def resolve(st):
             return cands[0]
     return st if ucount[st] >= 15 and len(uyears[st]) >= 3 else None
 
+HEADINGS = {"Oranges", "Orange", "Directory", "Co", "Inc", "The", "Eo", "So", "Wo", "Newark", "Irvington", "Arlington",
+            "Maplewood", "Hilton", "South", "Seton", "Street", "Avenue", "Road", "Place", "Terrace", "Mrs", "Miss",
+            "Rev", "Dr", "Ampere", "Th", "Name", "Motor", "Sum", "Su", "Sm", "In", "Ck", "Low", "Her", "Al", "St", "La"}
+
+def _split_echoed_surname(surname, given, direct, text):
+    if direct or DITTO_RE.match((text or "").strip()):
+        return surname, given, direct
+    m_v = re.match(r"^(Vander|Van|Von|De|Di|Du|La|Le)\s+([A-Z][a-z]{2,})\s+([A-Z][a-z]{2,}.*)$", given or "")
+    if m_v:
+        return m_v.group(1) + m_v.group(2), m_v.group(3), True
+    gtoks = (given or "").split()
+    if len(gtoks) >= 2 and surname:
+        w0 = gtoks[0].rstrip(".,")
+        w1 = gtoks[1].rstrip(".,")
+        if (
+            len(w0) >= 4
+            and re.match(r"^[A-Z][a-z]+$", w0)
+            and w0 not in GIVEN
+            and len(w1) >= 3
+            and re.match(r"^[A-Z][a-z]+$", w1)
+            and w1 not in {"Mrs", "Miss", "Inc", "Corp"}
+            and w0.lower() != surname.lower()
+            and (
+                difflib.SequenceMatcher(None, w0.lower(), surname.lower()).ratio() >= 0.62
+                or (len(surname) >= 4 and w0[:4].lower() == surname[:4].lower())
+            )
+        ):
+            return format_surname(w0), " ".join(gtoks[1:]), True
+    return surname, given, direct
+
 for r, st in parsed_rows:
     st = resolve(st)
     if not st: continue
@@ -224,6 +254,16 @@ for r, st in parsed_rows:
         spouse = r.get("spouse")
         occ = r.get("occ") or ""
         direct = bool(r["direct"])
+        m_caps = re.match(r"^([A-Z]{3,})\s+([A-Z]{2,}(?:\s+[A-Z]\.?)*)\s+(?:\(([A-Za-z .'’]+)\)\s+)?([a-z].*)$", (r.get("text") or "").strip())
+        if m_caps and m_caps.group(1).title() not in HEADINGS:
+            surname = format_surname(m_caps.group(1).title())
+            given = " ".join(w.title() for w in m_caps.group(2).split())
+            if m_caps.group(3) and not spouse:
+                spouse = m_caps.group(3).strip()
+            occ = re.split(r"\s(?:r|h|bds|res)\s+(?:\([0-9A-Za-z]+\)\s+)?\d", m_caps.group(4))[0].strip(" ,;")[:80]
+            direct = True
+        else:
+            surname, given, direct = _split_echoed_surname(surname, given, direct, r.get("text"))
     else:
         surname, given, spouse, occ, direct = repair_row(r)
     houses[st][norm_num(r["number"])]["listings"].append({
@@ -338,6 +378,8 @@ def harmonize(ls):
             chosen = None
             for top, n in candidates:
                 top_rows = [x for x in g if x["surname"] == top]
+                if not top_rows:
+                    continue
                 top_mids = {_mid_initial(x["given"]) for x in top_rows if _mid_initial(x["given"])}
                 top_sps = {_spouse_first(x["spouse"]) for x in top_rows if _spouse_first(x["spouse"])}
                 top_wids = {_wid_husband(x["occ"]) for x in top_rows if _wid_husband(x["occ"])}
@@ -372,11 +414,12 @@ def harmonize(ls):
                     if cur in HEADINGS or len(cur) <= 3 or cur in GIVEN:
                         if n >= 2 or direct_counts[top] >= 1 or same_sp or same_wid:
                             chosen = top; break
-                    if ratio >= 0.65 and (n >= 2 or direct_counts[top] >= 1):
+                    if ratio >= 0.62 and (n >= 2 or direct_counts[top] >= 1):
                         chosen = top; break
-                    if (same_sp or same_wid) and (n >= 1 and house_surnames[top] >= 2):
+                    min_ygap = min(abs(l["year"] - x["year"]) for x in top_rows)
+                    if (same_sp or same_wid) and min_ygap <= 6 and (ratio >= 0.45 or (n >= 1 and house_surnames[top] >= 2 and house_surnames[cur] <= 1)):
                         chosen = top; break
-                    if same_mid and n >= 2 and (ratio >= 0.35 or direct_counts[top] >= 1):
+                    if same_mid and min_ygap <= 4 and n >= 2 and ratio >= 0.55:
                         chosen = top; break
 
             if chosen:
