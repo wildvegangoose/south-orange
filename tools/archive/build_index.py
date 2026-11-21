@@ -131,14 +131,15 @@ def clean_person_fields(pre):
     return given, spouse, occ[:80]
 
 def format_surname(raw_tok):
-    s = raw_tok.rstrip(",")
-    if re.match(r"^(?:Mac|Mc|De|La|Le|Van|Von|O['’])[A-Z]", s):
+    s = raw_tok.strip(" ,.;:'’‘\"“”`")
+    s = re.sub(r"^O['’‘]([A-Za-z])", lambda m: "O’" + m.group(1).upper(), s)
+    if re.match(r"^(?:Mac|Mc|De|Di|Du|La|Le|Vander|Van|Von|St|O['’])[A-Z]", s):
         return s
     return s.title()
 
 def repair_row(r):
     t = re.sub(r"\s+", " ", r.get("text") or "").strip()
-    surname = r.get("surname") or ""
+    surname = (r.get("surname") or "").strip(" ,.;:'’‘\"“”`")
     given = r.get("given") or ""
     spouse = r.get("spouse")
     occ = r.get("occ") or ""
@@ -154,6 +155,7 @@ def repair_row(r):
         else:
             t_sur = re.sub(r"^(O['’])\s+([A-Z][a-z]+)", r"\1\2", t)
             t_sur = re.sub(r"^(Mc|Mac)\s+([A-Z][a-z]{2,})", r"\1\2", t_sur)
+            t_sur = re.sub(r"^(?:van\s+der|vander)\s+([A-Z][a-z]{2,})", r"Vander\1", t_sur, flags=re.I)
             w = t_sur.split(" ", 1)
             w0 = w[0].rstrip(",")
             rest_after_w0 = w[1] if len(w) > 1 else ""
@@ -254,6 +256,7 @@ for r, st in parsed_rows:
         spouse = r.get("spouse")
         occ = r.get("occ") or ""
         direct = bool(r["direct"])
+        old_sur = surname
         m_caps = re.match(r"^([A-Z]{3,})\s+([A-Z]{2,}(?:\s+[A-Z]\.?)*)\s+(?:\(([A-Za-z .'’]+)\)\s+)?([a-z].*)$", (r.get("text") or "").strip())
         if m_caps and m_caps.group(1).title() not in HEADINGS:
             surname = format_surname(m_caps.group(1).title())
@@ -265,11 +268,15 @@ for r, st in parsed_rows:
         else:
             surname, given, direct = _split_echoed_surname(surname, given, direct, r.get("text"))
     else:
+        old_sur = r.get("surname") or ""
         surname, given, spouse, occ, direct = repair_row(r)
-    houses[st][norm_num(r["number"])]["listings"].append({
+    entry = {
         "year": r["year"], "surname": surname, "given": given, "spouse": spouse, "occ": occ,
         "tenure": r["tenure"], "town": r["town"], "crop": r.get("crop"),
-        "src": f"{VIEWER}{r['src']}#page={r['page']}", "text": r["text"], "_direct": direct})
+        "src": f"{VIEWER}{r['src']}#page={r['page']}", "text": r["text"], "_direct": direct}
+    if old_sur and surname != old_sur:
+        entry["surname_ocr"] = old_sur
+    houses[st][norm_num(r["number"])]["listings"].append(entry)
 
 # --- 3. Scrapbooks (when present) -------------------------------------------
 SB_ADDR = re.compile(r"\b(\d{1,4})\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)\s+(road|Road|avenue|Avenue|ave|Ave|av|street|Street|place|Place|terrace|Terrace|drive|Drive|lane|Lane|court|Court|parkway|Parkway|Rd|St|Pl)\b\.?")
@@ -405,7 +412,7 @@ def harmonize(ls):
                 else:
                     cur_is_confirmed_family = direct_counts[cur] >= 1 or (
                         house_surnames[cur] >= 2 and cur not in GIVEN and cur not in HEADINGS
-                        and not (direct_counts[top] >= 1 and (same_sp or same_wid or same_mid))
+                        and not ((direct_counts[top] >= 1 or house_surnames[top] >= 3) and (same_sp or same_wid or same_mid))
                     )
                     if cur_is_confirmed_family:
                         if ed <= 2 and ratio >= 0.72 and house_surnames[top] > house_surnames[cur]:
@@ -417,7 +424,7 @@ def harmonize(ls):
                     if ratio >= 0.62 and (n >= 2 or direct_counts[top] >= 1):
                         chosen = top; break
                     min_ygap = min(abs(l["year"] - x["year"]) for x in top_rows)
-                    if (same_sp or same_wid) and min_ygap <= 6 and (ratio >= 0.45 or (n >= 1 and house_surnames[top] >= 2 and house_surnames[cur] <= 1)):
+                    if (same_sp or same_wid) and min_ygap <= 10 and (ratio >= 0.45 or (n >= 1 and house_surnames[top] >= 2 and house_surnames[cur] <= 1)):
                         chosen = top; break
                     if same_mid and min_ygap <= 4 and n >= 2 and ratio >= 0.55:
                         chosen = top; break

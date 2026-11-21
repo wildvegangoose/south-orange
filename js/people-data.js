@@ -38,7 +38,14 @@ MW.people = [
 "died": 1914,
 "desc": "Attorney and U.S. consul-general in Beirut who arranged the Metropolitan Museum of Art's first accession",
 "tie": "Died in South Orange; his son Hallett Johnson grew up there.",
-"field": "public"
+"field": "public",
+"homes": [
+{
+"address": "460 Scotland Road",
+"years": "1910–1914",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "George Edward Perine",
@@ -81,7 +88,14 @@ MW.people = [
 "died": 1915,
 "field": "science",
 "desc": "Editor of the Official Railway Guide, credited with organizing Standard Time (1883)",
-"tie": "Built a villa on Scotland Road in 1886 and led the Meadow Land Society that created Meadowland Park."
+"tie": "Built a villa on Scotland Road in 1886 and led the Meadow Land Society that created Meadowland Park.",
+"homes": [
+{
+"address": "180 Scotland Road",
+"years": "1886–1915",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "John Franklin Fort",
@@ -131,7 +145,14 @@ MW.people = [
 "died": 1933,
 "desc": "U.S. Representative from New Jersey (1911–1914) and later Chief Justice of the Supreme Court of the District of Columbia (1918–1929)",
 "tie": "South Orange village trustee in 1893–1895, 1901–1905 and 1910.",
-"field": "public"
+"field": "public",
+"homes": [
+{
+"address": "335 Hartford Road",
+"years": "1910",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Jack Fanning",
@@ -190,7 +211,14 @@ MW.people = [
 "died": 1948,
 "desc": "Vienna-born painter and illustrator best known for portraits of Native Americans and wildlife",
 "tie": "'Died Wednesday at his home in South Orange' in March 1948.",
-"field": "arts"
+"field": "arts",
+"homes": [
+{
+"address": "163 College Place",
+"years": "1928–1948",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Bessie Pease Gutmann",
@@ -199,7 +227,19 @@ MW.people = [
 "died": 1960,
 "desc": "Illustrator whose pictures of babies and young children were widely sold as prints",
 "tie": "She and her husband Hellmuth Gutmann lived in South Orange. From 1925 she summered at Island Heights and 'the balance of the year lived in South Orange' (Asbury Park Press, 1981).",
-"field": "arts"
+"field": "arts",
+"homes": [
+{
+"address": "44 West End Road",
+"years": "1910–1918",
+"src": "Oranges city directories"
+},
+{
+"address": "378 West End Road",
+"years": "1928–1942",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Eugene F. Kinkead",
@@ -208,7 +248,14 @@ MW.people = [
 "died": 1960,
 "desc": "Democratic U.S. Representative from New Jersey (1909–1915) and banker (Colonial Trust Co.)",
 "tie": "Seton Hall graduate (1895); died at his South Orange home in 1960.",
-"field": "public"
+"field": "public",
+"homes": [
+{
+"address": "273 Scotland Road",
+"years": "1922–1948",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Wilford Conrow",
@@ -251,7 +298,14 @@ MW.people = [
 "died": 1961,
 "desc": "Track and field athlete who won Olympic gold in the standing high jump and silver in the standing long jump at the 1912 Stockholm Games",
 "tie": "A South Orange resident and NJ Assemblyman when named state Chief Boxing Inspector in March 1923. Born in Belleville; died in Toms River.",
-"field": "sports"
+"field": "sports",
+"homes": [
+{
+"address": "445 Summit Avenue",
+"years": "1922–1942",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "John Eyre Sloane",
@@ -260,7 +314,19 @@ MW.people = [
 "died": 1970,
 "desc": "Industrialist who set up one of the first U.S. airplane factories, in Long Island City",
 "tie": "Born in South Orange to scientist-author T. O'Conor Sloane.",
-"field": "business"
+"field": "business",
+"homes": [
+{
+"address": "55 Montrose Avenue",
+"years": "1910–1940",
+"src": "Oranges city directories (T. O'Conor Sloane family home)"
+},
+{
+"address": "314 Tillou Road",
+"years": "1922",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Hallett Johnson",
@@ -269,7 +335,14 @@ MW.people = [
 "died": 1968,
 "desc": "Career diplomat who served as U.S. Ambassador to Costa Rica",
 "tie": "Grew up in South Orange; 'Hallett Johnson of South Orange'.",
-"field": "public"
+"field": "public",
+"homes": [
+{
+"address": "460 Scotland Road",
+"years": "1910–1914",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Art Howe",
@@ -287,7 +360,19 @@ MW.people = [
 "died": 1946,
 "desc": "Pioneering NBC executive who set trends in early network broadcasting",
 "tie": "'Born and raised in South Orange', daughter of journalist-publisher Henry Brainard.",
-"field": "business"
+"field": "business",
+"homes": [
+{
+"address": "74 Second Street",
+"years": "1908–1910",
+"src": "Oranges city directories"
+},
+{
+"address": "174 Irvington Avenue",
+"years": "1914",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Clinton H. Havill",
@@ -296,7 +381,14 @@ MW.people = [
 "died": 1953,
 "desc": "Aeronautical engineer at Curtiss-Wright and first recipient of the Wright Brothers Medal (1928)",
 "tie": "'By 1937 he was living in South Orange'.",
-"field": "science"
+"field": "science",
+"homes": [
+{
+"address": "480 Mayhew Court",
+"years": "1932–1950",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Jane Barus",
@@ -305,7 +397,14 @@ MW.people = [
 "died": 1977,
 "desc": "Civic leader and League of Women Voters official; delegate to the 1947 New Jersey constitutional convention",
 "tie": "Born Jane Garey in Kansas City; grew up in South Orange; graduated from the Beard School in Orange in 1909.",
-"field": "public"
+"field": "public",
+"homes": [
+{
+"address": "154 Ralston Avenue",
+"years": "1910–1920",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Louis Lozowick",
@@ -314,7 +413,14 @@ MW.people = [
 "died": 1973,
 "desc": "Russian-born painter and printmaker of machine-age and urban subjects",
 "tie": "Moved to South Orange in 1943 and kept working there until his death. The Dayton Art Institute dates the move to 1949.",
-"field": "arts"
+"field": "arts",
+"homes": [
+{
+"address": "62 Massel Terrace",
+"years": "1948–1950",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Alfred Kinsey",
@@ -323,7 +429,14 @@ MW.people = [
 "died": 1956,
 "desc": "Biologist and sex researcher",
 "tie": "His family moved from Hoboken to South Orange in 1904, when he was 10. He graduated from Columbia High School in 1912 as valedictorian.",
-"field": "science"
+"field": "science",
+"homes": [
+{
+"address": "102 Roland Avenue",
+"years": "1910–1920",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Monk Johnson",
@@ -341,7 +454,14 @@ MW.people = [
 "died": 1954,
 "desc": "Accountant and author of the best-selling guide Your Income Tax (first edition 1939)",
 "tie": "'He lived in South Orange, New Jersey, and at the Hotel Beverly in Manhattan'. Years not given.",
-"field": "business"
+"field": "business",
+"homes": [
+{
+"address": "307 West End Road",
+"years": "1932–1950",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "J. Gilbert Hall",
@@ -350,7 +470,14 @@ MW.people = [
 "died": 1977,
 "desc": "Tennis player who won 39 singles titles between 1926 and 1940",
 "tie": "Born in Springfield, NJ; 'a resident of South Orange'. Years not given.",
-"field": "sports"
+"field": "sports",
+"homes": [
+{
+"address": "35 Cottage Street",
+"years": "1928–1932",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Roderick Fletcher Mead",
@@ -359,7 +486,14 @@ MW.people = [
 "died": 1971,
 "desc": "Painter and printmaker best known for engravings",
 "tie": "Born in South Orange in 1900 'on his family's estate known as Springlawn', son of Winthrop Lincoln Mead.",
-"field": "arts"
+"field": "arts",
+"homes": [
+{
+"address": "275 North Ridgewood Road",
+"years": "1918–1924",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Gerardo Catena",
@@ -368,7 +502,14 @@ MW.people = [
 "died": 2000,
 "desc": "Organized-crime figure; a leader of the Genovese crime family",
 "tie": "Born in South Orange in 1902; described in 1970 as living in South Orange.",
-"field": "other"
+"field": "other",
+"homes": [
+{
+"address": "21 Overhill Road",
+"years": "1948–1950",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Edith Freilich",
@@ -386,7 +527,14 @@ MW.people = [
 "died": 1980,
 "desc": "Sculptor, architect and painter associated with Minimalism",
 "tie": "'Born, raised, lived and worked in South Orange'; his family still lived there when he died. His sculpture TAU was installed in a South Orange park in 2008.",
-"field": "arts"
+"field": "arts",
+"homes": [
+{
+"address": "66 Stanley Road",
+"years": "1918–1950",
+"src": "Montrose Park Historic District; Oranges city directories"
+}
+]
 },
 {
 "name": "Johnny Long",
@@ -422,7 +570,14 @@ MW.people = [
 "died": 2018,
 "desc": "NJ Commissioner of Transportation and chairman of both the Port Authority and the Corporation for Public Broadcasting",
 "tie": "'Mr. Sagner lives in South Orange'.",
-"field": "public"
+"field": "public",
+"homes": [
+{
+"address": "2 Crest Circle",
+"years": "1950",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Swede Masin",
@@ -467,7 +622,14 @@ MW.people = [
 "died": 2009,
 "desc": "U.S. Attorney for the District of New Jersey (1961–1969)",
 "tie": "U.S. Attorney for New Jersey; lived in South Orange in the 1960s.",
-"field": "public"
+"field": "public",
+"homes": [
+{
+"address": "263 Walton Avenue",
+"years": "1928–1950",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Erna Schneider Hoover",
@@ -504,7 +666,14 @@ MW.people = [
 "died": 2020,
 "desc": "Philanthropist and major funder of LGBTQ causes; his father was among the founders of International Flavors and Fragrances",
 "tie": "Born in South Orange on Oct. 19, 1930.",
-"field": "business"
+"field": "business",
+"homes": [
+{
+"address": "387 Hillside Place",
+"years": "1932–1950",
+"src": "Oranges city directories"
+}
+]
 },
 {
 "name": "Walter Dukes",

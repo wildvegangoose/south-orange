@@ -345,7 +345,7 @@ def column_entries(pw, ph, raw_lines, y_vol):
 
 
 def format_surname(raw_tok):
-    s = raw_tok.strip(" ,.;:")
+    s = raw_tok.strip(" ,.;:'’‘\"“”`")
     s = re.sub(r"^O['’‘]([A-Za-z])", lambda m: "O’" + m.group(1).upper(), s)
     if re.match(r"^(?:Mac|Mc|De|Di|Du|La|Le|Vander|Van|Von|St|O’)[A-Z]", s):
         return s
