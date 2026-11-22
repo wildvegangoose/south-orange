@@ -212,6 +212,22 @@ then Orange Township, then split with Clinton Township, then South Orange Townsh
    - A surname-only match for someone's childhood home is labeled "probably".
 4. **Privacy rule:** only verified, pre-1950, deceased people get a house link. Living people and anyone who lived there after 1950 are listed without addresses. We also left out people notable mainly for extremism or crimes. That was an editorial choice; record yours.
 
+## 8b. Search engine optimization (`tools/seo/build_seo.py`)
+
+Because pages like `landmarks.html`, `people.html`, and `timeline.html` render from `js/*-data.js`, raw HTML shells would look empty to search crawlers unless pre-rendered. Set `site_url`, `og_image`, and `og_image_alt` in `tools/town.json` (and `MW.town.siteUrl` / `MW.town.neighbor` in `js/data.js`), then run:
+
+```bash
+python3 tools/seo/build_seo.py
+python3 -m unittest discover -s tests -v
+```
+
+`build_seo.py` is idempotent and generates:
+- `robots.txt` and `sitemap.xml` at repository root.
+- Dedicated static landmark pages (`landmarks/<id>.html`) with unique `<title>`, `<meta name="description">`, `<link rel="canonical">`, Open Graph / Twitter cards, Schema.org `LandmarksOrHistoricalBuildings` + `BreadcrumbList` JSON-LD, and full static narrative/timeline/Sanborn HTML inside `<main id="lm">`.
+- Pre-rendered crawlable HTML and JSON-LD (`WebSite` + `SearchAction`, `CollectionPage`, `HowTo`) across all core `.html` templates, including the A–Z historic street directory on `house.html` (`#streetDirectory`).
+
+After publishing on GitHub Pages, add the site URL in **Google Search Console** and submit `sitemap.xml` so Google indexes the new town immediately. Also add reciprocal `MW.town.neighbor` links between adjacent towns.
+
 ## 9. Publish
 
 - **Work on a side branch and ask the owner before merging into the branch that GitHub Pages serves.** Long data runs leave the tree half-written; commit them on the side branch, not on the published one. Merge with a fast-forward once the owner says yes.

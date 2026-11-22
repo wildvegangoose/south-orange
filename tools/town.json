@@ -3,6 +3,9 @@
   "name": "South Orange",
   "state": "NJ",
   "site_title": "South Orange Through Time",
+  "site_url": "https://wildvegangoose.github.io/south-orange/",
+  "og_image": "img/landmarks/villagehall.jpg",
+  "og_image_alt": "South Orange Village Hall (1894), South Orange, New Jersey",
   "user_agent": "SouthOrangeThroughTime-fansite-research/0.1 (personal, non-commercial; polite crawl)",
   "bbox": {
     "west": -74.2832,

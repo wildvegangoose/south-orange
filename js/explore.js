@@ -136,12 +136,12 @@ document.addEventListener("DOMContentLoaded", () => {
     return { p, m, state: "hidden" };
   });
 
-  function update(y) {
+  function update(y, boot) {
     year = y;
     $("#bigYear").textContent = y;
     const era = MW.eraFor(y);
     $("#eraLine").innerHTML = `<b>${era.name}</b>. ${era.tagline}`;
-    history.replaceState(null, "", "?year=" + y);
+    if (!boot) history.replaceState(null, "", "?year=" + y);
     // vintage tint on tiles
     const sep = y < 1900 ? .75 : y < 1950 ? .75 - (y - 1900) / 50 * .5 : y < 2000 ? .25 - (y - 1950) / 50 * .25 : 0;
     document.documentElement.style.setProperty("--tile-filter", `sepia(${sep.toFixed(2)}) saturate(${(1 - sep * .5).toFixed(2)}) contrast(${(1 - sep * .08).toFixed(2)}) brightness(${(1 + sep * .04).toFixed(2)})`);
@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
     min: 1600, max: 2026, value: year, chips: false,
     ticks: [1666, 1806, 1861, 1950, 2026], onChange: update
   });
-  update(year);
+  update(year, true);
 
   if (focus) {
     const o = markers.find(o => o.p.id === focus);

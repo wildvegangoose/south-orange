@@ -1,8 +1,9 @@
-/* Landmark pages: landmark.html?id=<id>, plus the landmarks index (landmarks.html) */
+/* Landmark pages: landmarks/<id>.html (and legacy landmark.html?id=<id>), plus landmarks.html */
 document.addEventListener("DOMContentLoaded", () => {
   const MW = window.MW, esc = MW.esc;
   const $ = s => document.querySelector(s);
-  const id = new URLSearchParams(location.search).get("id");
+  const ROOT = document.body.dataset.root || "";
+  const id = document.body.dataset.landmark || new URLSearchParams(location.search).get("id");
   const L = MW.landmarks || {};
   const AGES = [["1888", "map", "USGS survey map"], ["1898", "map", "USGS survey map"], ["1906", "map", "USGS survey map"], ["1921", "map", "USGS survey map"],
     ["1930", "aerial", "Aerial photograph"], ["1947", "map", "USGS topographic map"], ["1955", "map", "USGS topographic map"], ["1972", "map", "USGS topographic map"],
@@ -15,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const list = Object.entries(L).sort((a, b) => a[1].built - b[1].built);
     $("#lmGrid").innerHTML = list.map(([k, v], i) => {
       const cover = (v.photos && v.photos[0]) ? v.photos[0].src : `img/ages/${k}/2020-aerial.jpg`;
-      return `<a class="lm-card reveal d${i % 3}" href="landmark.html?id=${k}">
+      return `<a class="lm-card reveal d${i % 3}" href="landmarks/${k}.html">
         <div class="lm-cover" style="background-image:url('${cover}')"><span class="lm-year">${esc(v.builtLabel || v.built)}</span></div>
         <div class="lm-body"><span class="tag ${v.kind || "house"}">${esc(v.type)}</span><h3>${esc(v.name)}</h3><p class="small muted">📍 ${esc(v.address)}</p><p>${esc(v.tagline)}</p></div></a>`;
     }).join("");
@@ -24,16 +25,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const v = L[id];
-  if (!v) { $("#lm").innerHTML = `<section class="section"><div class="wrap"><h1>Landmark not found</h1><p><a href="landmarks.html">See all landmarks →</a></p></div></section>`; return; }
-  document.title = `${v.name} · ${MW.town.siteTitle}`;
+  if (!v) { $("#lm").innerHTML = `<section class="section"><div class="wrap"><h1>Landmark not found</h1><p><a href="${ROOT}landmarks.html">See all landmarks →</a></p></div></section>`; return; }
+  document.title = `${v.name} (${v.builtLabel || v.built}) — ${MW.town.name}, NJ Landmark · ${MW.town.siteTitle}`;
+  if (!document.body.dataset.landmark && MW.town && MW.town.siteUrl) {
+    let can = document.querySelector('link[rel="canonical"]');
+    if (!can) { can = document.createElement("link"); can.rel = "canonical"; document.head.append(can); }
+    can.href = `${MW.town.siteUrl}landmarks/${id}.html`;
+  }
   const hero = (v.photos && v.photos.find(p => p.hero)) || (v.photos && v.photos[0]);
-  const ages = AGES.map(([y, kind, label]) => ({ y: +y, kind, label, src: `img/ages/${id}/${y}-${kind}.jpg` }));
+  const ages = AGES.map(([y, kind, label]) => ({ y: +y, kind, label, src: `${ROOT}img/ages/${id}/${y}-${kind}.jpg` }));
 
   $("#lm").innerHTML = `
-  <header class="lm-hero" style="${hero ? `background-image:url('${hero.src}')` : `background-image:url('img/ages/${id}/1930-aerial.jpg')`}">
+  <header class="lm-hero" style="${hero ? `background-image:url('${ROOT}${hero.src}')` : `background-image:url('${ROOT}img/ages/${id}/1930-aerial.jpg')`}">
     <div class="lm-hero-shade"></div>
     <div class="wrap lm-hero-in">
-      <a class="back" href="landmarks.html">← All landmarks</a>
+      <a class="back" href="${ROOT}landmarks.html">← All landmarks</a>
       <div class="eyebrow">${esc(v.type)} · ${esc(v.builtLabel || String(v.built))}</div>
       <h1>${esc(v.name)}</h1>
       <p class="lede">${esc(v.tagline)}</p>
@@ -51,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <aside class="lm-side">
         <div class="card lm-tl reveal"><h3>Timeline</h3><ol>${v.timeline.map(t => `<li><b>${esc(String(t.y))}</b><span>${esc(t.t)}</span></li>`).join("")}</ol></div>
         <div class="card reveal"><h3>On the map</h3><div id="lmMap" class="lm-map"></div>
-          <p class="small"><a href="${v.place ? `explore.html?place=${v.place}&year=${Math.max(1888, v.built)}` : "explore.html"}">Open in Explore the Map →</a> · <a href="house.html?q=${encodeURIComponent(v.address.split(/[(;]/)[0] + MW.town.geocodeSuffix)}">House story →</a></p></div>
+          <p class="small"><a href="${v.place ? `${ROOT}explore.html?place=${v.place}&year=${Math.max(1888, v.built)}` : `${ROOT}explore.html`}">Open in Explore the Map →</a> · <a href="${ROOT}house.html?q=${encodeURIComponent(v.address.split(/[(;]/)[0] + MW.town.geocodeSuffix)}">House story →</a></p></div>
       </aside>
     </div>
   </section>
@@ -73,13 +79,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   ${v.photos && v.photos.length ? `<section class="section photos-sec"><div class="wrap">
     <div class="eyebrow">Pictures</div><h2 class="reveal">${esc(v.name)} in photographs</h2>
-    <div class="photo-grid">${v.photos.map((p, i) => `<figure class="ph reveal d${i % 3}"><a href="${p.link || p.src}" target="_blank" rel="noopener"><img src="${p.src}" alt="${esc(p.caption || v.name)}" loading="lazy"></a>
+    <div class="photo-grid">${v.photos.map((p, i) => `<figure class="ph reveal d${i % 3}"><a href="${p.link || (ROOT + p.src)}" target="_blank" rel="noopener"><img src="${ROOT + p.src}" alt="${esc(p.caption || v.name)}" loading="lazy"></a>
       <figcaption>${p.year ? `<b>${esc(String(p.year))}</b> · ` : ""}${esc(p.caption || "")}<span class="credit">${esc(p.credit || "")}${p.license ? ` · ${esc(p.license)}` : ""}</span></figcaption></figure>`).join("")}</div>
     ${v.photoLinks && v.photoLinks.length ? `<p class="small muted" style="margin-top:1rem">More historic photos (copyrighted, viewable at their source): ${v.photoLinks.map(link).join(" · ")}</p>` : ""}
   </div></section>` : ""}
 
   ${v.clippings && v.clippings.length ? `<section class="section"><div class="wrap"><div class="eyebrow">From the library's scrapbooks</div><h2 class="reveal">In the news</h2>
-    <div class="news-grid">${v.clippings.map(c => `<a class="clip reveal" href="${c.src}" target="_blank" rel="noopener"><span class="doc-year">${c.year}</span><img src="${c.img}" alt="Clipping ${c.year}" loading="lazy"><span class="doc-cap">${esc(c.caption || "Scrapbook, " + c.year)}</span></a>`).join("")}</div></div></section>` : ""}
+    <div class="news-grid">${v.clippings.map(c => `<a class="clip reveal" href="${c.src}" target="_blank" rel="noopener"><span class="doc-year">${c.year}</span><img src="${c.img.startsWith("http") ? c.img : ROOT + c.img}" alt="Clipping ${c.year}" loading="lazy"><span class="doc-cap">${esc(c.caption || "Scrapbook, " + c.year)}</span></a>`).join("")}</div></div></section>` : ""}
 
   ${(() => { const m = v.address.match(/^(\d+)\S*\s+([A-Za-z. ]+?)(?:\s*[(,]|$)/); const h = m && MW.sanbornHTML ? MW.sanbornHTML(m[1], m[2], { title: `${esc(v.name)} on the Sanborn maps` }) : ""; return h ? `<section class="section sanborn"><div class="wrap">${h}</div></section>` : ""; })()}
 
@@ -93,13 +99,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const m = v.address.match(/^(\d+)[^ ]*\s+([A-Za-z ]+?)(?:\s*[(,]|$)/); if (!m) return;
     try {
       const slug = m[2].trim().toLowerCase().replace(/\s+/g, "-").replace(/-ave$/, "-avenue").replace(/-st$/, "-street").replace(/-rd$/, "-road");
-      const r = await fetch(`archive/data/streets/${slug}.json`); if (!r.ok) return;
+      const r = await fetch(`${ROOT}archive/data/streets/${slug}.json`); if (!r.ok) return;
       const h = (await r.json()).houses[m[1]]; if (!h) return;
       const items = (h.news || []).slice(0, 6), cards = (h.cards || []).slice(0, 2);
       if (!items.length && !cards.length) return;
       document.querySelector(".lm-sources").insertAdjacentHTML("beforebegin", `<section class="section"><div class="wrap"><div class="eyebrow">From the library archive</div><h2>Documents</h2>
-        <div class="news-grid">${cards.map(c => `<a class="clip" href="${c.src}" target="_blank" rel="noopener"><img src="archive/${c.img}" alt="Real-estate listing card" loading="lazy"><span class="doc-cap">Real-estate listing card</span></a>`).join("")}
-        ${items.map(c => `<a class="clip" href="${c.src}" target="_blank" rel="noopener"><span class="doc-year">${c.year}</span><img src="archive/${c.crop}" alt="Clipping ${c.year}" loading="lazy"><span class="doc-cap">Scrapbook clipping, ${c.year}</span></a>`).join("")}</div></div></section>`);
+        <div class="news-grid">${cards.map(c => `<a class="clip" href="${c.src}" target="_blank" rel="noopener"><img src="${ROOT}archive/${c.img}" alt="Real-estate listing card" loading="lazy"><span class="doc-cap">Real-estate listing card</span></a>`).join("")}
+        ${items.map(c => `<a class="clip" href="${c.src}" target="_blank" rel="noopener"><span class="doc-year">${c.year}</span><img src="${ROOT}archive/${c.crop}" alt="Clipping ${c.year}" loading="lazy"><span class="doc-cap">Scrapbook clipping, ${c.year}</span></a>`).join("")}</div></div></section>`);
     } catch (e) { /* archive not present */ }
   })();
 

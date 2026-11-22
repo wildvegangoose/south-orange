@@ -242,6 +242,70 @@ class SouthOrangeAccuracyTests(unittest.TestCase):
         self.assertEqual(self.js["storyCentre"], 1)
         self.assertEqual(self.js["storySouthCentre"], 0)
 
+    def test_seo_metadata_sitemap_and_static_landmarks(self):
+        import html as html_lib
+        import xml.etree.ElementTree as ET
+
+        cfg = json.loads((ROOT / "tools" / "town.json").read_text(encoding="utf-8"))
+        site_url = cfg["site_url"].rstrip("/") + "/"
+
+        robots = (ROOT / "robots.txt").read_text(encoding="utf-8")
+        self.assertIn("User-agent: *", robots)
+        self.assertIn("Allow: /", robots)
+        self.assertIn(f"Sitemap: {site_url}sitemap.xml", robots)
+
+        tree = ET.parse(ROOT / "sitemap.xml")
+        ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+        locs = [el.text for el in tree.getroot().findall("sm:url/sm:loc", ns)]
+        self.assertEqual(len(locs), len(set(locs)), "Duplicate URLs in sitemap.xml")
+        expected_count = 7 + len(self.js["landmarks"])
+        self.assertEqual(len(locs), expected_count)
+        self.assertNotIn(f"{site_url}landmark.html", locs)
+
+        lm_shell = (ROOT / "landmark.html").read_text(encoding="utf-8")
+        self.assertIn('content="noindex, follow"', lm_shell)
+
+        titles, descs = set(), set()
+        for loc in locs:
+            self.assertTrue(loc.startswith(site_url), f"Unexpected domain in sitemap: {loc}")
+            rel = loc[len(site_url) :] or "index.html"
+            fpath = ROOT / rel
+            self.assertTrue(fpath.is_file(), f"Sitemap URL missing on disk: {fpath}")
+            txt = fpath.read_text(encoding="utf-8")
+            self.assertIn('content="index, follow"', txt, f"Missing index, follow on {rel}")
+            self.assertIn(f'<link rel="canonical" href="{html_lib.escape(loc, quote=True)}">', txt, f"Canonical mismatch on {rel}")
+
+            tm = re.search(r"<title>([\s\S]*?)</title>", txt)
+            dm = re.search(r'<meta name="description" content="([^"]+)"', txt)
+            om = re.search(r'<meta property="og:image" content="([^"]+)"', txt)
+            jm = re.search(r'<script type="application/ld\+json">([\s\S]*?)</script>', txt)
+            self.assertTrue(tm and tm.group(1).strip(), f"Missing <title> on {rel}")
+            self.assertTrue(dm and 50 <= len(html_lib.unescape(dm.group(1))) <= 165, f"Bad meta description on {rel}")
+            self.assertTrue(om, f"Missing og:image on {rel}")
+            self.assertTrue(jm, f"Missing JSON-LD on {rel}")
+
+            t_val, d_val = tm.group(1).strip(), dm.group(1).strip()
+            self.assertNotIn(t_val, titles, f"Duplicate <title> across pages: {t_val}")
+            self.assertNotIn(d_val, descs, f"Duplicate meta description across pages: {d_val}")
+            titles.add(t_val)
+            descs.add(d_val)
+
+            og_img = html_lib.unescape(om.group(1))
+            self.assertTrue(og_img.startswith(site_url), f"og:image not absolute on {rel}: {og_img}")
+            og_file = ROOT / og_img[len(site_url) :]
+            self.assertTrue(og_file.is_file() and og_file.stat().st_size > 1000, f"Missing og:image file {og_file} on {rel}")
+
+            ld = json.loads(jm.group(1))
+            self.assertEqual(ld.get("@context"), "https://schema.org")
+            self.assertTrue(ld.get("@graph"), f"Empty JSON-LD @graph on {rel}")
+            if rel.startswith("landmarks/"):
+                self.assertRegex(txt, r"<h1>[^<]+</h1>", f"Static landmark missing <h1> on {rel}")
+
+        house_html = (ROOT / "house.html").read_text(encoding="utf-8")
+        self.assertEqual(len(re.findall(r'href="house\.html\?q=[^"]+"', house_html)), 184)
+        self.assertIn("https://wildvegangoose.github.io/maplewood/", (ROOT / "index.html").read_text(encoding="utf-8"))
+        self.assertIn("https://wildvegangoose.github.io/maplewood/people.html", (ROOT / "people.html").read_text(encoding="utf-8"))
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

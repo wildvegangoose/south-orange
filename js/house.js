@@ -111,11 +111,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const in1869 = v1869 ? G.inPolygon(here, v1869.geometry) : true;
     const stone = MW.places.find(p => p.id === "stonehouse"), dStone = G.distM(here, [stone.lat, stone.lon]);
     const title = hit.label && hit.label !== "Your chosen spot" ? q.replace(/,?\s*south orange.*$/i, "") : "Your chosen spot";
+    const prettyTitle = title.replace(/\b\w/g, c => c.toUpperCase());
+    if (title !== "Your chosen spot") document.title = `${prettyTitle} — ${MW.town.name}, NJ House History · ${MW.town.siteTitle}`;
     const style = built ? MW.styleFor(built) : null;
 
     $("#story").hidden = false;
     $("#sectionName").textContent = "In " + sec.name;
-    $("#storyTitle").textContent = title.replace(/\b\w/g, c => c.toUpperCase());
+    $("#storyTitle").textContent = prettyTitle;
     $("#glance").innerHTML = [
       ["Old road", `${roads[0].r.name.split(" (")[0]}, ${G.fmt(roads[0].d)} away`],
       ["Station", `${G.walkMin(dStation)} min walk to ${st.x.name}`],

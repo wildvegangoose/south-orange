@@ -136,10 +136,24 @@
       let index; try { index = await getJSON(ROOT + "data/street_index.json"); } catch (e) { return; } // archive not present: stay hidden
       const m = (q || "").match(/^\s*(\d+[A-Za-z]?)\s+([^,]+)/);
       const num = String(hit.number || (m && m[1]) || "").replace(/[^0-9]/g, "");
-      const road = hit.road || (m && m[2]);
+      const road = hit.road || (m && m[2]) || (!m && (q || "").replace(/,.*$/, "").trim());
       const key = matchStreet(index, road);
-      if (!key || !num) return;
+      if (!key) return;
       let sd; try { sd = await getJSON(ROOT + "data/streets/" + key + ".json"); } catch (e) { return; }
+      if (!num) {
+        const nums = Object.keys(sd.houses || {}).sort((a, b) => parseInt(a, 10) - parseInt(b, 10) || a.localeCompare(b));
+        if (!nums.length) return;
+        const stName = nice(sd.name);
+        el.innerHTML = `<div class="wrap"><div class="arch-head reveal">
+          <div class="eyebrow">From the city directories and old newspapers</div>
+          <h2>Houses on ${esc(stName)} (1908–1950)</h2>
+          <p class="lede">Select a house number on <b>${esc(stName)}</b> to see its 1908–1950 Oranges city directory listings and historic newspaper mentions.</p>
+          <div class="house-nums">${nums.map(n => `<a class="hnum" href="house.html?q=${encodeURIComponent(n + " " + stName)}">${esc(n)}</a>`).join("")}</div>
+        </div></div>`;
+        el.hidden = false;
+        MW.observeReveals(el);
+        return;
+      }
       const house = sd.houses[num];
       render(el, `${num} ${nice(sd.name)}`, sd.name, num, house, sd);
     }
