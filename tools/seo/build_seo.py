@@ -166,6 +166,7 @@ def build_head_seo_block(
     json_ld: dict | None = None,
     robots: str = "index, follow",
     google_site_verification: str | None = None,
+    cloudflare_beacon_token: str | None = None,
 ) -> str:
     lines = ["<!-- seo:head:start -->"]
     if google_site_verification:
@@ -192,6 +193,11 @@ def build_head_seo_block(
     )
     if json_ld is not None:
         lines.append("  " + json_ld_script(json_ld))
+    if cloudflare_beacon_token:
+        cf_json = json.dumps({"token": cloudflare_beacon_token}, separators=(",", ":"))
+        lines.append(
+            f"  <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{cf_json}'></script><!-- End Cloudflare Web Analytics -->"
+        )
     lines.append("  <!-- seo:head:end -->")
     return "\n".join(lines)
 
@@ -328,6 +334,7 @@ def build_landmark_pages(repo: dict) -> list[str]:
             title=title,
             description=desc,
             site_title=site_title,
+        cloudflare_beacon_token=cfg.get("cloudflare_beacon_token"),
             og_image_url=og_url,
             og_image_alt=og_alt,
             og_type="article",
@@ -738,6 +745,7 @@ def update_root_pages(repo: dict) -> list[str]:
         title=idx_title,
         description=idx_desc,
         site_title=site_title,
+        cloudflare_beacon_token=cfg.get("cloudflare_beacon_token"),
         og_image_url=og_img_url,
         og_image_alt=og_img_alt,
         json_ld=idx_ld,
@@ -795,6 +803,7 @@ def update_root_pages(repo: dict) -> list[str]:
         title=exp_title,
         description=exp_desc,
         site_title=site_title,
+        cloudflare_beacon_token=cfg.get("cloudflare_beacon_token"),
         og_image_url=og_img_url,
         og_image_alt=og_img_alt,
         json_ld=exp_ld,
@@ -834,6 +843,7 @@ def update_root_pages(repo: dict) -> list[str]:
         title=hs_title,
         description=hs_desc,
         site_title=site_title,
+        cloudflare_beacon_token=cfg.get("cloudflare_beacon_token"),
         og_image_url=og_img_url,
         og_image_alt=og_img_alt,
         json_ld=hs_ld,
@@ -889,6 +899,7 @@ def update_root_pages(repo: dict) -> list[str]:
         title=lms_title,
         description=lms_desc,
         site_title=site_title,
+        cloudflare_beacon_token=cfg.get("cloudflare_beacon_token"),
         og_image_url=og_img_url,
         og_image_alt=og_img_alt,
         json_ld=lms_ld,
@@ -923,6 +934,7 @@ def update_root_pages(repo: dict) -> list[str]:
         title=pp_title,
         description=pp_desc,
         site_title=site_title,
+        cloudflare_beacon_token=cfg.get("cloudflare_beacon_token"),
         og_image_url=og_img_url,
         og_image_alt=og_img_alt,
         json_ld=pp_ld,
@@ -957,6 +969,7 @@ def update_root_pages(repo: dict) -> list[str]:
         title=tl_title,
         description=tl_desc,
         site_title=site_title,
+        cloudflare_beacon_token=cfg.get("cloudflare_beacon_token"),
         og_image_url=og_img_url,
         og_image_alt=og_img_alt,
         json_ld=tl_ld,
@@ -1004,6 +1017,7 @@ def update_root_pages(repo: dict) -> list[str]:
         title=rs_title,
         description=rs_desc,
         site_title=site_title,
+        cloudflare_beacon_token=cfg.get("cloudflare_beacon_token"),
         og_image_url=og_img_url,
         og_image_alt=og_img_alt,
         json_ld=rs_ld,
@@ -1034,6 +1048,7 @@ def update_root_pages(repo: dict) -> list[str]:
         title=lm_shell_title,
         description=lm_shell_desc,
         site_title=site_title,
+        cloudflare_beacon_token=cfg.get("cloudflare_beacon_token"),
         og_image_url=og_img_url,
         og_image_alt=og_img_alt,
         robots="noindex, follow",

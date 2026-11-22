@@ -298,6 +298,8 @@ class SouthOrangeAccuracyTests(unittest.TestCase):
             ld = json.loads(jm.group(1))
             self.assertEqual(ld.get("@context"), "https://schema.org")
             self.assertTrue(ld.get("@graph"), f"Empty JSON-LD @graph on {rel}")
+            if cfg.get("cloudflare_beacon_token"):
+                self.assertIn(cfg["cloudflare_beacon_token"], txt, f"Missing Cloudflare beacon on {rel}")
             if rel.startswith("landmarks/"):
                 self.assertRegex(txt, r"<h1>[^<]+</h1>", f"Static landmark missing <h1> on {rel}")
 
