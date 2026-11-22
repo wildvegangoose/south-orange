@@ -89,6 +89,21 @@
     const nearby = !cards.length && streetData ? Object.entries(streetData.houses).filter(([n, h]) => h.cards.length && n !== num)
       .sort((a, b) => Math.abs(+a[0] - +num) - Math.abs(+b[0] - +num)).slice(0, 3) : [];
 
+    // adjacent same-parity numbers (±2) that only existed <= 1920 and vanished (possible pre-1920s renumbering)
+    const minYr = ls.length ? Math.min(...ls.map(l => l.year)) : 9999;
+    const nInt = parseInt(num, 10);
+    const nearbyOld = (streetData && !isNaN(nInt) && minYr >= 1920)
+      ? [nInt - 2, nInt + 2].map(c => String(c)).map(c => {
+          const ch = streetData.houses[c];
+          if (!ch || (ch.cards && ch.cards.length) || !ch.listings || !ch.listings.length) return null;
+          const yrs = ch.listings.map(l => l.year).sort((a, b) => a - b);
+          const maxY = yrs[yrs.length - 1];
+          if (maxY > 1920 || maxY >= minYr) return null;
+          const firstNamed = ch.listings.find(l => l.given && l.surname) || ch.listings[0];
+          return { num: c, first: yrs[0], last: maxY, who: person(firstNamed) };
+        }).filter(Boolean)
+      : [];
+
     el.innerHTML = `<div class="wrap">
       <div class="arch-head reveal">
         <div class="eyebrow">From the city directories and old newspapers</div>
@@ -111,6 +126,7 @@
           ${ls.length ? `<ol class="rlist">${Object.keys(byYear).sort().map(y => `<li><span class="ry">${y}</span><div>${byYear[y].map(l =>
             `<div class="rp"><b>${esc(person(l))}</b>${l.spouse ? ` <span class="muted">(${esc(l.spouse)})</span>` : ""} · <span class="muted">${esc(l.tenure === "householder" ? "head of household" : l.tenure)}${l.occ ? ", " + esc(expandOcc(l.occ)) : ""}</span> <a class="src" href="${l.src}" target="_blank" rel="noopener" title="See the scanned page">scan ↗</a></div>`).join("")}</div></li>`).join("")}</ol>`
             : `<p class="muted">No directory listings found for this number through 1950.</p>`}
+          ${nearbyOld.length ? `<p class="small muted" style="margin-top:.8rem;padding:.65rem .8rem;background:rgba(227,163,58,.12);border-radius:10px"><b>Earlier numbering nearby (unconfirmed):</b> ${nearbyOld.map(o => `<a href="house.html?q=${encodeURIComponent(o.num + " " + nice(street))}">#${esc(o.num)} ${esc(nice(street))}</a> (${o.first === o.last ? o.first : `${o.first}–${o.last}`}${o.who ? `, ${esc(o.who)}` : ""})`).join(" and ")} disappeared after ${Math.max(...nearbyOld.map(o => o.last))}. Some pre-1920 houses were renumbered—check the 1912 Sanborn map or deed chain to confirm whether it was this house or an adjacent lot.</p>` : ""}
           <p class="small muted">The text was read by computer from the scans, so names can be misspelled. The scanned lines below, and the "scan ↗" links, show the originals.</p>
         </div>
       </div>
