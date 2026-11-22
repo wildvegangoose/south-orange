@@ -165,24 +165,31 @@ def build_head_seo_block(
     og_type: str = "website",
     json_ld: dict | None = None,
     robots: str = "index, follow",
+    google_site_verification: str | None = None,
 ) -> str:
-    lines = [
-        "<!-- seo:head:start -->",
-        f'  <meta name="robots" content="{esc(robots)}">',
-        f'  <link rel="canonical" href="{esc(canonical)}">',
-        f'  <meta property="og:type" content="{esc(og_type)}">',
-        f'  <meta property="og:site_name" content="{esc(site_title)}">',
-        '  <meta property="og:locale" content="en_US">',
-        f'  <meta property="og:title" content="{esc(title)}">',
-        f'  <meta property="og:description" content="{esc(description)}">',
-        f'  <meta property="og:url" content="{esc(canonical)}">',
-        f'  <meta property="og:image" content="{esc(og_image_url)}">',
-        f'  <meta property="og:image:alt" content="{esc(og_image_alt)}">',
-        '  <meta name="twitter:card" content="summary_large_image">',
-        f'  <meta name="twitter:title" content="{esc(title)}">',
-        f'  <meta name="twitter:description" content="{esc(description)}">',
-        f'  <meta name="twitter:image" content="{esc(og_image_url)}">',
-    ]
+    lines = ["<!-- seo:head:start -->"]
+    if google_site_verification:
+        lines.append(
+            f'  <meta name="google-site-verification" content="{esc(google_site_verification)}" />'
+        )
+    lines.extend(
+        [
+            f'  <meta name="robots" content="{esc(robots)}">',
+            f'  <link rel="canonical" href="{esc(canonical)}">',
+            f'  <meta property="og:type" content="{esc(og_type)}">',
+            f'  <meta property="og:site_name" content="{esc(site_title)}">',
+            '  <meta property="og:locale" content="en_US">',
+            f'  <meta property="og:title" content="{esc(title)}">',
+            f'  <meta property="og:description" content="{esc(description)}">',
+            f'  <meta property="og:url" content="{esc(canonical)}">',
+            f'  <meta property="og:image" content="{esc(og_image_url)}">',
+            f'  <meta property="og:image:alt" content="{esc(og_image_alt)}">',
+            '  <meta name="twitter:card" content="summary_large_image">',
+            f'  <meta name="twitter:title" content="{esc(title)}">',
+            f'  <meta name="twitter:description" content="{esc(description)}">',
+            f'  <meta name="twitter:image" content="{esc(og_image_url)}">',
+        ]
+    )
     if json_ld is not None:
         lines.append("  " + json_ld_script(json_ld))
     lines.append("  <!-- seo:head:end -->")
@@ -734,6 +741,7 @@ def update_root_pages(repo: dict) -> list[str]:
         og_image_url=og_img_url,
         og_image_alt=og_img_alt,
         json_ld=idx_ld,
+        google_site_verification=cfg.get("google_site_verification"),
     )
     idx_html = inject_head_seo(idx_html, idx_title, idx_desc, idx_seo)
     default_year = 1896 if is_so else 1905
